@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+{% load staticfiles %}
+<head>
+  <meta charset="UTF-8">
+    <title>Vp. Canales</title>
+    <link rel="shortcut icon" href="{% static 'favicon/favicon.jpg' %}"/>
+    <link href='https://fonts.googleapis.com/css?family=Raleway:200,400,800' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel='stylesheet prefetch' href='https://www.marcoguglie.it/Codepen/AnimatedHeaderBg/demo-1/css/demo.css'>
+    <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css.map'>
+    <link rel='stylesheet prefetch' href="{% static 'fondologin/css/style.css' %}">
+     <!-- Font Awesome -->
+     <!-- <link rel="stylesheet" href="{% static 'adminlte/bower_components/font-awesome/css/font-awesome.min.css' %}"> -->
+</head>
+{% if form.errors %}
+    <p>Tu Idop o tu contraseña no coinciden, por favor intenta de nuevo</p>
+{% endif %}
+
+<body>
+    <!-- Este div es la imagen de fondo -->
+
+    <div id="large-header" class="large-header">
+    <!-- Este canvas es la animacion en JS -->
+    <canvas id="demo-canvas"></canvas>
+    <!-- Titulo y Eslogan -->
+    <h1 class="main-company"><img src="https://espacio.fundaciontelefonica.com/wp-content/themes/telefonica/images/telefonica-icon-bajo.png" width="330" height="80"/><div style="height: 15px;"></div> <span class="thin">Elegimos Todo</span></h1>
+    <!-- Formulario con metodo post para que lo ingresado lo reconozca django -->
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <h2 class="main-title">{{form.username}} 
+            <span class="thin"><p>{{form.password}}</p></span>
+        </h2>
+        <h1 class="main-button">
+            <input class="button-secondary" type="submit" value="Ingresar" />
+            <!-- <span class="glyphicon glyphicon-lock form-control-feedback"></span> -->
+            <input type="hidden" name="next" value="{{ next }}" />
+        </h1>
+    </form>
+
+</div>
+    <script src='https://www.marcoguglie.it/Codepen/AnimatedHeaderBg/demo-1/js/EasePack.min.js'></script>
+    <script src='https://www.marcoguglie.it/Codepen/AnimatedHeaderBg/demo-1/js/rAF.js'></script>
+    <script src='https://www.marcoguglie.it/Codepen/AnimatedHeaderBg/demo-1/js/TweenLite.min.js'></script>
+    <script src="{% static 'fondologin/js/index.js' %}"></script>
+</body>
+</html>

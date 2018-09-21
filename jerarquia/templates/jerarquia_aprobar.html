@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class ="box top-buffer">
+	<div class="box-body">
+<div class="col-xs-12" id="data_table" name="data_table">
+	<table id="results" name="results" class="table white text-center">
+		<thead>
+			<td>Codigo Unico</td>
+			<td>Nombre</td>
+			<td>Lider</td>
+			<td>Revisar</td>
+		</thead>
+		<tbody>
+		{% for result in results %}
+			<tr>
+				<td>{{result.codigo_unico}}</td>
+				<td>{{result.nombre_key__nombre}}</td>
+				<td>{{result.lider_key__lider}}</td>
+        <td><a onclick="return abrir_modal('/aprobar_cambio/{{result.codigo_unico}}/')" class="btn btn-info"><span class="glyphicon glyphicon-search"></span></a>
+        </td></tr>
+
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+</div>
+</div>
+</div>
+<div id="popup" class="modal fade" role="dialog">
+</div>
+
+
+
+{% endblock %}
+{% block extra_js %}
+<script>
+function abrir_modal(url)
+{
+        $('#popup').load(url, function()
+        {
+                $(this).modal('show');
+        });
+        return false;
+};
+function cerrar_modal()
+{
+        $('#popup').modal('hide');
+        return false;
+};
+</script>
+{%endblock%}

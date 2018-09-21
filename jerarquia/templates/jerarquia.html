@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+<form method="POST" action="{%url 'jerarquia'%}" id="consulta">{% csrf_token %}
+<div class = "row">
+<div class="col-xs-3">
+<h4>Tipo</h4>
+{{filtro.tipo}}
+</div>
+
+<div class="col-xs-3">
+<h4>Lider</h4>
+{{filtro.lider}}
+</div>
+<div class="col-xs-3">
+<h4>Codigo</h4>
+{{filtro.codigo}}
+</div>
+</div>
+</form>
+{{consulta}}
+<div class ="box top-buffer">
+	<div class="box-body">
+<div class="col-xs-12" id="data_table" name="data_table">
+	<table id="results" name="results" class="table">
+		<thead>
+			<tr>
+			<th scope="col">Codigo Unico</th>
+			<th scope="col">Nombre</th>
+			<th scope="col">Lider</th>
+			<th scope="col">Editar</th>
+			</tr>
+
+		</thead>
+
+		<tbody>
+
+		</tbody>
+	</table>
+</div>
+</div>
+</div>
+<div id="popup" class="modal fade" role="dialog">
+</div>
+
+
+
+{% endblock %}
+{% block extra_js %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.quicksearch/2.4.0/jquery.quicksearch.min.js"></script>
+<script>
+$(document).ready(function() {
+    $(function() {
+        $('#id_lider,#id_tipo,#id_region,#id_codigo').change(function() {
+					var tipo = $("#id_tipo").val();
+					var region = $("#id_region").val();
+					var lider = $("#id_lider").val();
+					dropdown(tipo,region,lider);
+          consulta();
+
+        });
+    });
+
+		function dropdown(tipo,region,lider){
+
+		}
+
+    function consulta() {
+
+        $.ajax({
+            url: $("#consulta").attr('action'),
+            type: $("#consulta").attr('method'),
+            data: $("#consulta").serialize(),
+            success: function(data) {
+              var str = '';
+              jQuery.each(data, function(key, value) {
+                var route = "'/editar/"+value['codigo']+"/'"
+                str += '<tr><td>' + value['codigo'] + '</td>' +
+                        '<td>' + value['nombre'] + '</td>' +
+                        '<td>' + value['lider'] + '</td>' +
+                        '<td>'+'<a onclick="return abrir_modal('+route+')" class="btn btn-info"><span class="glyphicon glyphicon-edit"></span></a>'+
+                        '</td></tr>'
+                });
+            $('table[name=results] thead').html('		<tr><th scope="col">Codigo Unico</th><th scope="col">Nombre</th><th scope="col">Lider</th><th scope="col">Editar</th></tr>')
+            $('table[name=results] tbody').html(str)
+      	    .hide()
+            .fadeIn(1500, function() { $('#results'); });
+            }
+
+        })
+
+    }
+
+});
+
+</script>
+
+<script>
+function abrir_modal(url)
+{
+        $('#popup').load(url, function()
+        {
+                $(this).modal('show');
+        });
+        return false;
+};
+function cerrar_modal()
+{
+        $('#popup').modal('hide');
+        return false;
+};
+</script>
+
+<script>
+$(document).ready(function() {
+  $(window).keydown(function(event){
+    if(event.keyCode == 13) {
+      event.preventDefault();
+      return false;
+    }
+  });
+});
+</script>
+<script>
+$(document).ready(function () {
+    $(document).ajaxStart(function () {
+        $("#loading").show();
+    }).ajaxStop(function () {
+        $("#loading").hide();
+    });
+});
+</script>
+<style>
+.top-buffer { margin-top:40px; }
+
+</style>
+
+{%endblock%}

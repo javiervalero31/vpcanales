@@ -1,0 +1,321 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}Recargas Telefonica{% endblock %}
+
+{% block extrahead %}
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="{% static 'js/amcharts/amcharts.js' %}"></script>
+  <script src="{% static 'js/amcharts/themes/light.js' %}"></script>
+  <script src="{% static 'js/amcharts/serial.js' %}"></script>
+  <script src="{% static 'js/amcharts/plugins/export/export.min.js' %}"></script>
+  <script src="{% static 'js/amcharts/plugins/export/lang/es.js' %}"></script>
+  <script src="{% static 'js/amcharts/plugins/dataloader/dataloader.min.js' %}"></script>
+  <script src="{% static 'js/amcharts/lang/es.js' %}"></script>
+  <!-- <script src="https://www.amcharts.com/lib/3/gauge.js"></script> -->
+  <link rel="stylesheet" href="{% static 'js/amcharts/plugins/export/export.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/recargas.css' %}" />
+  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+{% endblock %}
+{% block content %}
+<!-- {{ventas.tiempo__fecha}} -->
+<div id="root">
+    <!-- <p v-text="msg">
+    </p> -->
+
+    <!-- <ul v-for="direction in directions">
+        <li v-text="direction.nombre"></li>
+    </ul> -->
+
+    <!-- <ul v-for="fecha in bootDates">
+      <li v-text="fecha"></li>
+    </ul> -->
+    <section class="content-header">
+        <h1>
+            Portal de Recargas
+        </h1>
+        <h4 class="text-aqua" id='dataDate'>Obteniendo datos...</h4>
+        <div class="alert alert-info alert-dismissible" v-if="!lider">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h4 id='info'>
+                <i class="icon fa fa-info"></i>
+                Datos de Líderes no habilitados temporalmente.
+            </h4>
+        </div>
+
+        {% comment %} <ol class="breadcrumb">
+          <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+          <li class="active">Dashboard</li>
+        </ol> {% endcomment %}
+    </section>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="box box-primary" id='p2p-by-date'>
+          <!-- Panel Head -->
+          <div class="box-header with-border">
+            <div class="col-md-6">
+              <h3 class="box-title">Venta de Recargas P2P</h3>
+            </div>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus" title="Minimizar"></i>
+                </button>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-box-tool" id="btnFiltroRecargasP2P" title="Filtro">
+                    <i class="fa fa-filter"></i>
+                  </button>
+                </div>
+                <button type="button" class="btn btn-box-tool" data-widget="remove" title="Cerrar"><i class="fa fa-times"></i></button>
+            </div>
+          </div>
+          <div class="box-body">
+                   
+           <!-- Filtro -->
+           <div id="p2p-filter" style="display:none">
+              <div class="row">
+                <div class="col-md-12 col-sm-11">
+                 
+                  <div class="row">
+                      <div class="col-md-3">
+                          <div class="form-group">
+                            <label for="exampleSelect1">Dirección:</label>
+                            <select class="form-control" id="direccionFilter">
+                              <option value="">Total</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                              <label for="exampleSelect1">Gerente:</label>
+                              <select class="form-control" id="gerenteFilter">
+                                <option value="">Total</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-md-3">
+                              <div class="form-group">
+                                <label for="exampleSelect1">Distribuidor:</label>
+                                <select class="form-control" id="empresaFilter">
+                                  <option value="">Total</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="col-md-3">
+                              <label for="exampleSelect1">
+                                <span title="El Distribuidor Inactivo se muestra en color rojo."><i class="fa fa-question-circle"></i></span>
+                                Mostrar Distribuidor Inactivo: 
+                              </label>
+                              <button id="visualizarInactivos" class="btn btn-primary btn-group form-control">Sí</button>
+                          </div> 
+                  </div>
+                  <div class="row">
+                      <div class="col-md-3">
+                          <div class="form-group">
+                            <label for="exampleSelect1">Región:</label>
+                            <select class="form-control" id="regionFilter">
+                              <option value="">Total</option>
+                            </select>
+                          </div>
+                        </div>  
+                      
+                        <div class="col-md-3" v-show="lider">
+                          <div class="form-group">
+                            <label for="liderFilter">Líder:</label>
+                            <select class="form-control" id="liderFilter" >
+                              <option value="">Total</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                              <label for="exampleSelect1">Sucursal:</label>
+                              <select class="form-control" id="distribuidorFilter" v-model="itemSelected">
+                                <option value="">Total</option>
+                              </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                          <label for="exampleSelect1">Fecha:</label> 
+                          <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-calendar-check-o"></i>
+                            </span>
+                            <input class="form-control" type="text" name="datefilter" value="" id='ventas-saldo' />
+                          </div>
+                        </div>
+                
+                  <!-- <div class="btn-group filter-button">
+                    <a class="btn btn-danger" href="#!">Limpiar filtros</a>
+                  </div> -->
+                </div>
+                <div class="row">
+                  
+                    
+                </div>
+                <!-- <br /> -->
+                <hr />
+              </div>
+              </div>
+            </div>
+            <!-- end Filtro -->
+
+            <!-- Charts -->
+            <div class="row">
+              <div class="col-md-9" style="padding-right: 1px;">	
+                <!-- <h5 class="p2p-graph-title">Act. Diaria</h5> -->
+                <div id="chartdiv" class="chart-border"></div>
+              </div>
+              <div class="col-md-3" style="padding-left: 5px">
+                <!-- <h5 class="p2p-graph-title">Act. Acum. </h5> -->
+                  <div id="chartdiv2" class="chart-border" style="vertical-align:middle;display: inline-block; width: 100%; height: 470px;"></div>
+                <!-- <div class="row chart-border">
+                  <div id="chartdiv3" style="vertical-align: middle;display: inline-block; width: 100%; height: 200px;"></div>
+                </div> -->
+              </div>
+            </div>
+            <!-- end Charts -->  
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel  Recargas por fecha-->
+    
+      <!-- end Panel Recargas por fecha-->
+      <!-- .row>.col-md-12>.box#p2p-by-dimension>.box-header.with-border>.col-md-6>.box-title{Recargas P2P por gerente}   -->
+      <!-- Second graph -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="box box-info" id="p2p-by-dimension">
+            <div class="box-header with-border">
+              <div class="col-md-6">
+                <div class="box-title">Ranking Ventas de Saldo Recargas P2P</div>
+              </div>
+              <div class="box-tools pull-right">
+                  <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus" title="Minimizar"></i>
+                  </button>
+                  <button type="button" class="btn btn-box-tool" id="btnFiltroRecargasP2PGerente" title="Filtro">
+                      <i class="fa fa-filter"></i>
+                  </button>
+                  <button type="button" class="btn btn-box-tool" data-widget="remove" title="Cerrar"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+            <div class="box-body">
+              <div class="row" id='filtroRecargasP2PGerente' style="display:none">
+                  <!-- <div class="col-md-3">
+                      <label for="exampleSelect1">Fecha:</label> 
+                      <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-calendar-check-o"></i>
+                        </span>
+                        <input class="form-control" type="text" name="datefilter" value="" />
+                      </div>
+                  </div> -->
+
+                  <div class="btn-group" data-toggle="buttons" id="p2p-dim-selector">
+                    <div class="col-md-3">
+                      <label for="exampleSelect1" class="">
+                          <div class="input-group">
+                              <span class="input-group-addon">
+                                  <i class="fa fa-calendar-check-o"></i>
+                                </span>
+                                <input class="form-control" type="text" name="datefilter" value="" id="ranking" />
+                          </div>
+                      </label>
+                    </div>
+                    <div class="col-md-6" data-toggle="buttons" >
+                      <label class="btn btn-primary active">
+                        <input class="dimensions" type="radio" name="options" id="option1" autocomplete="off" value="Direccion" checked>Dirección
+                      </label>
+                      <label class="btn btn-primary">
+                          <input class="dimensions" type="radio" name="options" id="option2" autocomplete="off" value="Region">Región
+                      </label>
+                      <label class="btn btn-primary">
+                        <input class="dimensions" type="radio" name="options" id="option3" autocomplete="off" value="Gerente">Gerente
+                      </label>
+                      <label v-if="lider" class="btn btn-primary" id="rankinglider">
+                            <input class="dimensions" type="radio" name="options" id="option4" autocomplete="off" value="Lider">Líder
+                      </label>
+                      <label class="btn btn-primary">
+                        <input class="dimensions" type="radio" name="options" id="option5" autocomplete="off" value="Distribuidor">Distribuidor
+                      </label>
+                      <label class="btn btn-primary">
+                        <input class="dimensions" type="radio" name="options" id="option6" autocomplete="off" value="Sucursal">Sucursal
+                      </label>
+                    </div>
+                    <div class="col-md-3" data-toggle="buttons" id="p2p-dim-selector-visibility">
+                        <label class="btn btn-info active">
+                            <input type="radio" name="visuals" id="option1" autocomplete="off" value="True" checked>Activos
+                          </label>
+                          <label class="btn btn-info">
+                              <input type="radio" name="visuals" id="option2" autocomplete="off" value="False">Inactivos
+                          </label>
+                          <label class="btn btn-info">
+                            <input type="radio" name="visuals" id="option3" autocomplete="off" value="">Todos
+                          </label>
+                    </div>
+                  </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                    <div class="tools">
+                        <br>
+                        <label>Ranking de Selección:</label><div id="selection" class="infos">...</div>
+                        <!-- <label>Seleccionado:</label><div id="clicked" class="infos">...</div> -->
+                    </div>
+                  <div id="chart-by-dim" class="chart-border" style="vertical-align:middle;display: inline-block; width: 100%; height: 400px;"></div>
+                  <!-- <div id="chart-hist-month" class="chart-border" style="vertical-align:middle;display: inline-block; width: 100%; height: 180px;"></div> -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Thrid graph -->
+      <!-- <div class="row">
+        <div class="col-md-12">
+          <div class="box" id="p2p-by-dimension-2">
+            <div class="box-header with-border">
+              <div class="col-md-6">
+                <div class="box-title">Recargas P2P por Distribuidor</div>
+              </div>
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus" title="Minimizar"></i>
+                </button>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-box-tool" id="btnFiltroRecargasP2Pempresa" title="Filtro">
+                    <i class="fa fa-filter"></i>
+                  </button>
+                </div>
+                <button type="button" class="btn btn-box-tool" data-widget="remove" title="Cerrar"><i class="fa fa-times"></i></button>
+            </div>
+            </div>
+            <div class="box-body">
+              <div class="row">
+                <div class="col-md-12">	
+                  <div id="chart-by-dim-2" class="chart-border" style="vertical-align:middle;display: inline-block; width: 100%; height: 500px;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>        -->
+      
+</div>
+{% endblock %}
+{% block extra_js %}
+  <!-- {# <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>#} -->
+  {# {% include 'adminlte/lib/_scripts.html' %} #}
+  {# <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>#}
+  <script src="{% static 'js/moment.min.js' %}"></script>
+  <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+  <!-- <script src="{% static 'js/graph.js' %}"></script> -->
+
+  <script src="{% static 'js/recargas/helpers.js' %}"></script>
+  <script src="{% static 'js/recargas/bootstrap.js' %}"></script>
+  <!-- <script src="{% static 'js/recargas/charts/gaugeP2P.js' %}"></script> -->
+  <script src="{% static 'js/recargas/charts/rankingP2P.js' %}"></script>
+  <!-- <script src="{% static 'js/recargas/charts/empresaP2P.js' %}"></script> -->
+  <script src="{% static 'js/recargas/main.js' %}"></script>
+  <script src="{% static 'js/recargas/root.js' %}"></script>
+
+  
+{% endblock %}

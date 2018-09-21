@@ -1,0 +1,416 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block extrahead %}
+<!-- CSS del tablesorter -->
+  <link rel="stylesheet" href="{% static 'tablesorter-master/css/theme.grey.css' %}">
+  <!-- Date picker CSS -->
+  <link rel="stylesheet" href="{% static 'datepicker/css/daterangepicker.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte/bower_components/datatables.net-bs/css/dataTables.bootstrap.css' %}">
+
+    <link rel="stylesheet" href="{% static 'reporteria/css/report_styles2.css' %}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+
+{% endblock extrahead %}
+
+
+{% block content %}
+
+<h1>
+  REPORTERIA
+</h1>
+
+<h4 class="text-aqua">Data actualizada hasta el {{fecha_completa}}</h4>
+
+
+<div class="panel panel-default">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="wizard">
+        <div class="wizard-inner">
+          <div class="connecting-line"></div>
+					<ul class="nav nav-tabs" role="tablist">
+						<li role="presentation" class="active">
+							<a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Rango">
+								<span class="round-tab">
+									<i class="glyphicon glyphicon-calendar"></i>
+								</span>
+							</a>
+						</li>
+
+						<li role="presentation" class="disabled">
+							<a href="#step2" data-toggle="tab" aria-controls="step2" role="tab" title="Tipo Actividad">
+								<span class="round-tab">
+									<i class="glyphicon glyphicon-th-list"></i>
+								</span>
+							</a>
+						</li>
+
+						<li role="presentation" class="disabled">
+							<a href="#step3" data-toggle="tab" aria-controls="step3" role="tab" title="Agregar Variables">
+								<span class="round-tab">
+									<i class="glyphicon glyphicon-plus">
+									</i>
+								</span>
+							</a>
+						</li>
+
+						<li role="presentation" class="disabled">
+							<a href="#complete" data-toggle="tab" aria-controls="complete" role="tab" title="Completado">
+								<span class="round-tab">
+									<i class="glyphicon glyphicon-ok">
+									</i>
+								</span>
+							</a>
+						</li>
+					</ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form method="post" name="formu" id="msform" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="tab-content">
+      <div class="tab-pane active" role="tabpanel" id="step1">
+        <div class="row">
+          <div class="col-12" align="center">
+            <div class="row">
+              <h3>
+                Fecha
+              </h3>
+
+              <div style="height: 30px;"></div>
+              <p>
+                Rango de fecha para el reporte a elaborar
+              </p>
+            </div>
+            <div class="row">
+              <div class="col-6 col-md-4"></div>
+              <div class="col-6 col-md-4 span2">
+                <input type="text" class="form-control center-block" name="daterange" value="01/01/2015 - 01/31/2015" />
+              </div>
+              <div class="col-6 col-md-4"></div>
+            </div>
+            <div style="height: 60px;"></div>
+          </div>
+        </div>
+        <ul class="list-inline pull-right">
+          <li>
+            <button type="button" class="btn btn-primary next-step">Siguiente</button>
+          </li>
+        </ul>
+      </div>
+      <div class="tab-pane" role="tabpanel" id="step2">
+        <div class="control-group">
+          <div class="row">
+            <div class="col-12" align="center">
+              <h3>
+                Actividad
+              </h3>
+              <div style="height: 30px;"></div>
+              <p>
+                Seleccione la Actividad a incluir en el reporte
+              </p>
+
+            </div>
+            <div class="row">
+              <div class="col-6 col-md-4"></div>
+              <div class="col-6 col-md-4 span2">
+                <div class="select">
+                  <select name="actividad" class="form-control" id="actividades" onchange="act_desc_actividad()">
+                    <option disabled="disabled" selected="selected" value="seleccione">
+                      Seleccionar Actividad
+                    </option>
+                    <option value="activacion">
+                      Activaciones
+                    </option>
+                    <option value="alta">
+                      Altas
+                    </option>
+                    <option value="baja">
+                      Bajas
+                    </option>
+                  </select>
+                  <div class="select__arrow"></div>
+                </div>
+              </div>
+              <div class="col-6 col-md-4"></div>
+            </div>
+          </div>
+          <div style="height: 60px;"></div>
+          <ul class="list-inline pull-right">
+            <li>
+              <button type="button" class=
+              "btn btn-default prev-step">Atras</button>
+            </li>
+            <li>
+              <button type="button" class=
+              "btn btn-primary next-step" id="submit1" disabled>Siguiente</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="tab-pane" role="tabpanel" id="step3">
+        <div class="control-group">
+          <div class="row">
+            <div class="col-12" align="center">
+              <h3>
+                Indicadores
+              </h3>
+              <div style="height: 30px;"></div>
+              <p>
+                Seleccione los Indicadores que desea en el reporte
+              </p>
+            </div>
+            <div class="row">
+              <div class="row" >
+                <!-- Columna 1 -->
+                <div class="col-md-2"></div><!-- Columna 2 -->
+                <div class="col-md-2">
+
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Variables referentes a la Fecha">
+                    <label class="custom-control-label" >Variables de Fecha</label>
+                  </div>
+
+                  <div class="custom-control custom-checkbox mr-sm-2" id="nan_baja" title="Dia de la Actividad">
+                    <input type="checkbox" class="custom-control-input" id="dia" name="Dia" />
+                    <label class="custom-control-label" for="customControlAutosizing">Dia</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mr-sm-2" id="nan_baja" title="Semana de la Actividad">
+                    <input type="checkbox" class="custom-control-input" id="semana" value="Semana" name="Semana" />
+                    <label class="custom-control-label" for="customControlAutosizing">Semana</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Mes de la Actividad">
+                    <input type="checkbox" class="custom-control-input" value="Mes" id="mes" name="Mes" />
+                    <label class="custom-control-label" for="customControlAutosizing">Mes</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Trimestre de la Actividad">
+                    <input type="checkbox" class="custom-control-input" value="Trimestre" id="trimestre" name="Trimestre" />
+                    <label class="custom-control-label" for="customControlAutosizing">Trimestre</label>
+                  </div>
+
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Semestre de la Actividad">
+                    <input type="checkbox" class="custom-control-input" value="Semestre" id="semestre" name="Semestre" />
+                    <label class="custom-control-label" for="customControlAutosizing">Semestre</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Año de la Actividad">
+                    <input type="checkbox" class="custom-control-input" id="ano" name="Ano" />
+                    <label class="custom-control-label" for="customControlAutosizing">Año</label>
+                  </div>
+                </div><!-- Columna 3 -->
+                <div class="col-md-2">
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Variables referentes a los Agentes">
+                    <label class="custom-control-label" >Variables de Agente</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Codigo Agente">
+                    <input type="checkbox" class="custom-control-input" id="" name="Codigo de Agente" />
+                    <label class="custom-control-label" for="customControlAutosizing">Codigo de Agente</label>
+                  </div>
+                  
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Codigo SAP del Agente">
+                    <input type="checkbox" class="custom-control-input" id="" name="Codigo SAP" />
+                    <label class="custom-control-label" for="customControlAutosizing">Codigo SAP</label>
+                  </div>
+
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Nombre de tienda">
+                    <input type="checkbox" class="custom-control-input" id="" name="Nombre de Agente" />
+										<label class="custom-control-label" for="customControlAutosizing">Nombre de Agente</label>
+                  </div>
+
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Ubicacion del agente en funcion a centro comercial">
+                  <input type="checkbox" class="custom-control-input" id="" name="Centro Comercial" />
+                  <label class="custom-control-label" for="customControlAutosizing">Centro Comercial</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Estado Geografico">
+                    <input type="checkbox" class="custom-control-input" id="" name="Estado" />
+                    <label class="custom-control-label" for="customControlAutosizing">Estado</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Region Geografica">
+                    <input type="checkbox" class="custom-control-input" id="" name="Region" />
+                    <label class="custom-control-label" for="customControlAutosizing">Region</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Este/Oeste">
+                    <input type="checkbox" class="custom-control-input" id="" name="Este/Oeste" />
+										<label class="custom-control-label" for="customControlAutosizing">Este/Oeste</label>
+                  </div>
+
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Dirección Física del Agente">
+                    <input type="checkbox" class="custom-control-input" id="" name="Direccion fisica" />
+                    <label class="custom-control-label" for="customControlAutosizing">Dirección Física</label>
+                  </div>
+
+                  <div class="custom-control custom-checkbox mr-sm-2" title="AA, ASI o CDS">
+                    <input type="checkbox" class="custom-control-input" id="" name="Canal de Venta" />
+                    <label class="custom-control-label" for="customControlAutosizing">Canal de Venta</label>
+                  </div>
+                </div><!-- Columna 4 -->
+                <div class="col-md-2" >
+                  
+
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Variables referentes a Planes">
+                    <label class="custom-control-label" >Variables de Plan</label>
+                  </div>
+                  
+
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Codigo del plan usado por el cliente">
+                    <input type="checkbox" class="custom-control-input" id="codigoplan" name="Codigo Plan" />
+										<label class="custom-control-label" for="customControlAutosizing">Codigo Plan</label>
+                  </div>
+                  
+
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Plan actual usado por el cliente">
+                    <input type="checkbox" class="custom-control-input" id="" name="Nombre Plan" />
+										<label class="custom-control-label" for="customControlAutosizing">Nombre Plan</label>
+                  </div>
+                  
+
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Costo mensual de la renta utilizada">
+                    <input type="checkbox" class="custom-control-input" id="renta_m" name="Renta Mensual" />
+										<label class="custom-control-label" for="customControlAutosizing">Renta Mensual</label>
+                  </div>
+                 
+
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Recarga promedio por planes en parque">
+                    <input type="checkbox" class="custom-control-input" id="recarga_m" name="Recarga Mensual" />
+										<label class="custom-control-label" for="customControlAutosizing">Recarga Mensual</label>
+                  </div>
+                 
+
+                 <div class="custom-control custom-checkbox mr-sm-2" title="Cantidad de cuentas por el precio unitario del plan">
+                  <input type="checkbox" class="custom-control-input" name="Renta Total" id="renta_t" />
+                  <label class="custom-control-label" for="customControlAutosizing">Renta Total</label>
+                  </div>
+                  
+
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Cantidad de cuentas por el precio de la renta media">
+                  <input type="checkbox" class="custom-control-input"  name="Recarga Total" id="recarga_t" />
+                  <label class="custom-control-label" for="customControlAutosizing">Recarga Total</label>
+                  </div>
+                 
+
+                  <!-- OPCIONES DE CANTIDAD PARA ACTIVACIONES Y ALTAS O DE BRUTAS, REACTIVADAS Y NETAS PARA BAJAS-->
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Cantidad de la Activacion o Alta" id="cantidad">
+                    <input type="checkbox" class="custom-control-input" id="o1" name="Cantidad" />
+										<label class="custom-control-label" for="customControlAutosizing">Cantidad</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Perdida de Parque que excluye cuentas Reactivadas" id="bruta">
+                    <input type="checkbox" class="custom-control-input" id="o2" name="Bajas Brutas" /> <label class="custom-control-label" for="customControlAutosizing">Bajas Brutas</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Total de cuentas que se reincorporaron en Parque" id="reactivada">
+                    <input type="checkbox" class="custom-control-input" id="o3" name="Bajas Reactivada" />
+                    <label class="custom-control-label" for="customControlAutosizing">Bajas Reactivada
+                    </label>
+                  </div>
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Bajas Brutas menos Bajas Reactivadas" id="neta">
+                    <input type="checkbox" class="custom-control-input" id="o4" name="Bajas Neta"/>
+                    <label class="custom-control-label" for="customControlAutosizing">Bajas Neta</label>
+                  </div>
+
+                </div>
+                <div class="col-md-2">
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Otras Variables">
+                    <label class="custom-control-label" >Otras Variables</label>
+                  </div>
+
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Nombre del Gerente">
+                    <input type="checkbox" class="custom-control-input" id="" name="Gerente" />
+                    <label class="custom-control-label" for="customControlAutosizing">Gerente</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Nombre del Lider">
+                    <input type="checkbox" class="custom-control-input" id="" name="Lider" />
+                    <label class="custom-control-label" for="customControlAutosizing">Lider</label>
+
+                  </div>
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Nombre del Coordinador">
+                    <input type="checkbox" class="custom-control-input" id="" name="Coordinador" />
+                    <label class="custom-control-label" for="customControlAutosizing">Coordinador</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Smartphone/No Smartphone">
+                    <input type="checkbox" class="custom-control-input" id="" name="Terminal" />
+                    <label class="custom-control-label" for="customControlAutosizing">Terminal</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mr-sm-2" title="2G/3G/4G">
+                    <input type="checkbox" class="custom-control-input" id="tecnologia" name="Tecnologia" onclick="message_tecnologia()"
+                    title="Atención" data-toggle="popover" data-trigger="focus" data-placement="top" data-content="La información de Tecnología, se actualiza los días lunes y cierres de mes."
+                    />
+                    <label class="custom-control-label" for="customControlAutosizing">Tecnologia</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mr-sm-2" title="Pre-pago Post-pago">
+                    <input type="checkbox" class="custom-control-input" id="" name="Plataforma" />
+                    <label class="custom-control-label" for="customControlAutosizing">Plataforma</label>
+                  </div>
+
+                </div><!-- Columna 6 -->
+                <div class="col-md-2"></div>
+              </div>
+            </div>
+          </div>
+          <div style="height: 60px;"></div>
+          <ul class="list-inline pull-right">
+            <li>
+              <button type="button" class=
+              "btn btn-default prev-step">Atras</button>
+            </li>
+            <li>
+              <button type="submit" class="btn btn-primary next-step" value="Submit" id="submit2" >Finalizar</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="tab-pane" role="tabpanel" id="complete">
+        <div class="col-12" align="center">
+          <div class="row">
+            <h3>
+              Generando Reporte
+            </h3>
+            <div style="height: 30px;"></div>
+            <p>
+              Su descarga empezara en breves instantes
+            </p>
+            <div style="height: 60px;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </form>
+</div><!-- /.MultiStep Form -->
+<p>
+  {% endblock content %}
+  {% block extra_js %}
+<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js'></script>
+<script src="{% static 'adminlte/bower_components/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'adminlte/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
+<script src="{% static 'reporteria/js/report_js2.js' %}"></script>
+
+<script type="text/javascript">
+  $(function () {
+    $('[data-toggle="popover"]').popover()
+  })
+
+  function message_tecnologia() {
+    // render the message when user click tecnologia
+    const tecnologiaCheckbox = $('#tecnologia')
+    tecnologiaCheckbox.change(function() {
+      this.checked ? tecnologiaCheckbox.popover('show') : tecnologiaCheckbox.popover('hide');
+    });
+  }
+
+$('input[name="daterange"]').daterangepicker({
+  minDate: '2015-06-01',
+  maxDate:'{{fecha}}',
+  startDate: '{{fecha}}',
+  endDate:'{{fecha}}',
+  locale: {
+    format: 'YYYY-MM-DD',
+    separator: ' to ',
+  },
+})
+       
+</script>
+
+<script src="{% static 'js/validators_checkbox.js' %}"></script>
+{% endblock extra_js %}

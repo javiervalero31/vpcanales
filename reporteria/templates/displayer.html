@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+<script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+<script src="https://www.amcharts.com/lib/3/serial.js"></script>
+<script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+<link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+<script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+
+
+<link rel="stylesheet" href="{% static 'reporteria/css/buefy.min.css' %}">
+<link rel="stylesheet" href="{% static 'reporteria/css/v-calendar.min.css' %}">
+<script  src="{% static 'reporteria/js/buefy.min.js' %}"></script>
+<script  src="{% static 'reporteria/js/v-calendar.js' %}"></script>
+<script  src="{% static 'reporteria/js/vue-select.js' %}"></script>
+<!-- Buefy JavaScript -->
+<style type="text/css">
+		#chartdiv {
+		  width: auto;
+		  height: 400px;
+		}
+		.amcharts-export-menu-top-right {
+		  top: 10px;
+		  right: 0;
+		}
+</style>
+
+<style type="text/css"> /*estilos para que no se rompan los filtros*/
+.v-select .dropdown-toggle {
+display: flex !important;
+height: 35px !important;
+border-radius: 5px !important;
+flex-wrap: wrap;}
+
+.v-select input[type=search], .v-select input[type=search]:focus {
+flex-basis: 20px;
+flex-grow: 1;
+height: 35px !important;
+padding: 0 20px 0 10px;
+width: 310px !important;
+border-radius: 5px !important;
+}
+
+input {
+	display: flex !important;
+  border-radius: 4px;
+	min-width: 100% !important;
+}
+
+</style>
+
+
+
+<div id="main" class="container">
+   <panel titulo="API.name">
+
+		 <div slot="titulo">[[API.name.grafico]]</div>
+		 <filtro v-model="API.name" :options="graphic_list" label="grafico"
+				slot="seleccionador" >
+		 </filtro>
+
+      <div slot="label1" v-if="API.name.grafico==='Activaciones vs. Cuota'">
+         Rango de Fecha:
+      </div>
+			<v-date-picker v-model="selected.fecha" slot="filtro1" mode='range'  v-if="API.name.grafico==='Activaciones vs. Cuota'" show-caps is-double-paned id="daterange"></v-date-picker>
+
+			<div slot="label2" v-if="API.name.grafico==='Activaciones vs. Cuota'">
+				 Codigo de Agente:
+			</div>
+      <filtro v-model="selected.codigo" :options="API.APIData.Local" label="codigo" :get-option-label="getLabel" v-if="API.name.grafico==='Activaciones vs. Cuota'"
+         slot="filtro2" v-if="API.name.grafico==='Activaciones vs. Cuota'">
+      </filtro>
+
+			<div slot="label3" v-if="API.name.grafico==='Activaciones vs. Cuota'">
+         Canal:
+      </div>
+      <filtro v-model="selected.canal" :options="API.APIData.canal" label="canal" v-if="API.name.grafico==='Activaciones vs. Cuota'"
+         slot="filtro3" v-if="API.name.grafico==='Activaciones vs. Cuota'">
+      </filtro>
+
+			<div slot="label4" v-if="API.name.grafico==='Activaciones vs. Cuota'">
+         Gerente:
+      </div>
+      <filtro v-model="selected.nombre_gte" :options="API.APIData.Gerente" label="nombre_gte" v-if="API.name.grafico==='Activaciones vs. Cuota'"
+         slot="filtro4"  >
+      </filtro>
+
+			<div slot="label5" v-if="API.name.grafico==='Activaciones vs. Cuota'">
+         Lider:
+      </div>
+      <filtro v-model="selected.nombre_super" :options="API.APIData.Supervisor" label="nombre_super" v-if="API.name.grafico==='Activaciones vs. Cuota'"
+         slot="filtro5">
+      </filtro>
+
+			<!-- <div slot="label6" v-if="API.name.grafico==='Activaciones vs. Cuota'">
+         Tecnologia:
+      </div> -->
+      <!-- <filtro v-model="selected.tecnologia" :options="API.APIData.tecnologia" label="tecnologia" v-if="API.name.grafico==='Activaciones vs. Cuota'"
+         slot="filtro6">
+      </filtro> -->
+
+			<activaciones-cuotas ref="act_cuo" :arg="API" slot="grafico" v-if="API.name.grafico==='Activaciones vs. Cuota'">
+			</activaciones-cuotas>
+
+
+   </panel>
+
+</div>
+<script src="{% static 'reporteria\js\components\activaciones-cuotas.js' %}"></script>
+<script src="{% static 'reporteria\js\components\panel.js' %}"></script>
+<script>
+Vue.component('filtro', VueSelect.VueSelect);
+Vue.use(Buefy.default)
+</script>
+
+<script type="text/javascript">
+
+
+new Vue({
+	delimiters: ['[[', ']]'],
+	el:'#main',
+	data : {
+		API : { name:"Elige un grafico!", APIData:[] },
+		graphic_name: "",
+		graphic_list: [ //cambiar esto por una consulta a la api
+		 {grafico:"Activaciones vs. Cuota"},
+		 // {grafico:"Alta vs. Cuota"},
+		 // {grafico:"Activaciones vs. Alta"},
+		 // {grafico:"Activaciones por Plan"},
+		 // {grafico:"Altas por Plan"},
+		 // {grafico:"Bajas de Parque"}
+		],
+		selected : {
+			"codigo":null,
+			"canal":null,
+			"nombre_gte":null,
+			"nombre_super":null,
+			"fecha":null
+			// "tecnologia":null
+		},
+
+
+	},
+	watch: {
+    'selected':{
+    	handler:function(newVal){
+				console.log(this.API.name.grafico)
+    		var newUrl ='/api-reporteria/cuota/?'
+    		if(this.API.name.grafico=='Activaciones vs. Cuota'){
+    			if(this.selected.fecha != null){
+    				newUrl+= "fecha1=" + moment(this.selected.fecha.start).format("YYYY-MM-DD") + "&fecha2=" + moment(this.selected.fecha.end).format("YYYY-MM-DD")+"&"
+    			};
+    			if(this.selected.codigo != null){
+    				newUrl+= "codigo="+this.selected.codigo.codigo+"&"
+    			};
+    			if(this.selected.canal != null){
+    				newUrl+= "canal="+this.selected.canal.canal+"&"
+    			};
+    			if(this.selected.nombre_gte != null){
+    				newUrl+= "gerente="+this.selected.nombre_gte.nombre_gte+"&"
+    			};
+    			if(this.selected.nombre_super != null){
+    				newUrl+= "lider="+this.selected.nombre_super.nombre_super+"&"
+    			};
+					// if(this.selected.tecnologia != null){
+    			// 	newUrl+= "tecnologia="+this.selected.tecnologia.tecnologia+"&"
+    			// };
+					this.consultingAPI("Activaciones vs. Cuota",newUrl)
+				}
+			},
+			deep:true,
+		},
+	},
+	methods:{
+		consultingAPI: function(grafico,url = '/api-reporteria/cuota/?fecha1=2018-05-1&fecha2=2018-05-5' ){
+			axios.get(url).then(response=>{
+				this.API.APIData = response.data
+			});
+		},
+		getLabel(option) {
+	return `${option.nombre_local} (${option.codigo})`
+},
+	},
+	computed:{
+		searchTitle : function(i) {
+			return this.graphic_list.filter((i) => i.includes(this.graphic_name));
+		}
+	},
+});
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+{%endblock%}

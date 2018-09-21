@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+
+
+<div class="row">
+	<div class="col-md-12">
+	{{mensaje|safe}}
+						</div>
+
+
+<div class="col-md-offset-1 col-md-2">
+
+</div>
+<div class="col-md-4">
+		{%for field in f%}
+		<form method="POST">{% csrf_token %}
+			<div class="row top-buffer">
+		{{field.label_tag}}{{field}}<input type="submit" value="Agregar" name="{{field.name}}" class="btn btn-info">
+		</div>
+		</form>
+		{%endfor%}
+</div>
+
+
+<!-- {%for field in f%}
+<form method="POST">{% csrf_token %}
+<table>
+	<tr>
+<th>{{field.label_tag}}</th>
+<th>{{field}}</th>
+<th><input type="submit" value="Agregar" name="{{field.name}}"></th>
+</tr>
+</table>
+</form>
+{%endfor%} -->
+
+
+</div>
+<div id="popup" class="modal fade" role="dialog">
+</div>
+{%if f%}
+<div class="col-md-offset-4 col-md-2 top-buffer-2">
+<div class="row ">
+<a onclick="return abrir_modal('/nuevo_agente/')" class="btn btn-info">Agregar Nuevo Agente  <span class="glyphicon glyphicon-plus"></span></a>
+</div>
+</div>
+
+<div class="row top-buffer">
+</div>
+{%endif%}
+{% endblock %}
+{% block extra_js %}
+<style>
+
+th, td {
+    padding: 15px;
+    text-align: left;
+}
+
+</style>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.quicksearch/2.4.0/jquery.quicksearch.min.js"></script>
+
+<script>
+function abrir_modal(url)
+{
+        $('#popup').load(url, function()
+        {
+                $(this).modal('show');
+        });
+        return false;
+};
+function cerrar_modal()
+{
+        $('#popup').modal('hide');
+        return false;
+};
+</script>
+
+<script>
+$(document).ready(function() {
+  $(window).keydown(function(event){
+    if(event.keyCode == 13) {
+      event.preventDefault();
+      return false;
+    }
+  });
+});
+</script>
+<script>
+$(document).ready(function () {
+    $(document).ajaxStart(function () {
+        $("#loading").show();
+    }).ajaxStop(function () {
+        $("#loading").hide();
+    });
+});
+</script>
+<style>
+.top-buffer { margin-top:20px; }
+.top-buffer-2 { margin-top:29px; }
+</style>
+
+
+{%endblock%}

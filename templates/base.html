@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+
+{% load staticfiles %}
+{% load auth_extras %}
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Vp. Canales</title>
+    <link rel="shortcut icon" href="{% static 'favicon/favicon.jpg' %}"/>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="{% static 'adminlte/bower_components/bootstrap/dist/css/bootstrap.min.css' %}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'adminlte/bower_components/font-awesome/css/font-awesome.min.css' %}">
+    <link type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,400italic,600" rel="stylesheet">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="{% static 'adminlte/bower_components/Ionicons/css/ionicons.min.css' %}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{% static 'adminlte/dist/css/AdminLTE.min.css' %}">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="{% static 'adminlte/dist/css/skins/_all-skins.min.css' %}">
+    {% block extrahead %}{% endblock %}
+</head>
+
+<body class="hold-transition skin-blue sidebar-mini">
+    <!-- Site wrapper -->
+    <div class="wrapper">
+
+        <header class="main-header">
+            <!-- Logo -->
+            <a href="/" class="logo">
+                <!-- mini logo for sidebar mini 50x50 pixels -->
+                <span class="logo-mini"><b>VP</b>C</span>
+                <!-- logo for regular state and mobile devices -->
+                <span class="logo-lg"><b>VP.</b>Canales</span>
+            </a>
+
+            <!-- Header Navbar: style can be found in header.less -->
+            <nav class="navbar navbar-static-top">
+                <!-- Sidebar toggle button-->
+                <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+
+            </nav>
+        </header>
+
+        <!-- =============================================== -->
+
+        <!-- Left side column. contains the sidebar -->
+        <aside class="main-sidebar">
+            <!-- sidebar: style can be found in sidebar.less -->
+            <section class="sidebar">
+                <!-- Sidebar user panel -->
+                <div class="user-panel">
+                    <div class="pull-left image">
+                        <img src="{% static '/adminlte/dist/img/movistar.png' %}" class="img-circle" alt="User Image">
+                    </div>
+                    <div class="pull-left info">
+                        <p>{{ user.get_full_name }}</p>
+                        <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                    </div>
+                </div>
+                <!-- search form -->
+                <!-- <form action="#" method="get" class="sidebar-form">
+        <div class="input-group">
+          <input type="text" name="q" class="form-control" placeholder="Search...">
+          <span class="input-group-btn">
+                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                </button>
+              </span>
+        </div>
+      </form> -->
+                <!-- /.search form -->
+                <!-- sidebar menu: : style can be found in sidebar.less -->
+                <ul class="sidebar-menu" data-widget="tree">
+                    <li class="header">Modulos Disponibles</li>
+                    {%if request.user.is_superuser%}
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-wrench"></i> <span>Herramientas Administrador </span>
+                            <span class="pull-right-container">
+
+            </span>
+                        </a>
+
+                        <ul class="treeview-menu">
+                            <li><a href="/mail_informativo"><i class="fa fa-circle-o"></i> Mail Informativo </a></li>
+                            <li><a href="/index_update"><i class="fa fa-circle-o"></i> Update Index </a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    <!-- <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-dashboard"></i> <span>Actividad Comercial </span>
+                            <span class="pull-right-container">
+              <small class="label pull-right bg-yellow">Migrando</small>
+            </span>
+                        </a>
+
+                        <ul class="treeview-menu">
+                            <li><a href="//10.160.8.132/analitica/activaciones"><i class="fa fa-circle-o"></i> Activaciones </a></li>
+                            <li><a href="//10.160.8.132/analitica/altas"><i class="fa fa-circle-o"></i> Altas </a></li>
+                        </ul>
+                    </li> -->
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-files-o"></i>
+                            <span>Gestion Resolutiva</span>
+                            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="/escaladas"><i class="fa fa-circle-o"></i> Escaladas</a></li>
+                            <li><a href="/resueltas"><i class="fa fa-circle-o"></i> Resueltas </a></li>
+                            {%if request.user.is_staff%}
+                            <li><a href="/upload"><i class="fa fa-circle-o"></i> Cargar Data </a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-file-excel-o"></i>
+                            <span>Actividad Comericial</span>
+                            <!-- <small class="label pull-right bg-red">BETA</small> -->
+                            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="/reporte"><i class="fa fa-circle-o"></i>Reportes</a></li>
+                            <li><a href="/comercial_grafica"><i class="fa fa-circle-o"></i>Graficos</a></li>
+                            {%if request.user.is_staff%}
+                            <li><a href="/carga_data"><i class="fa fa-circle-o"></i>Cargar Información</a></li>
+                            {% endif %}
+
+                        </ul>
+                    </li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-money"></i>
+                            <span>Recargas</span>
+                            <!-- <small class="label pull-right bg-red">BETA</small> -->
+                            <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="/recargas/P2P/"><i class="fa fa-circle-o"></i>P2P</a></li>
+                            {%if request.user.is_staff%}
+                            <li><a href="/recargas/import"><i class="fa fa-circle-o"></i>Cargar Información</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-sitemap"></i>
+                            <span>Jerarquia</span>
+                            <!-- <small class="label pull-right bg-red">BETA</small> -->
+                            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            {% if request.user|has_group:"Lider" or request.user|has_group:"Coordinador" or request.user|has_group:"Gerente" or request.user|has_group:"Aprobador Final"%}
+                            <li><a href="/jerarquia"><i class="fa fa-circle-o"></i>Solicitudes</a></li>
+                            {% endif %}
+                            {% if request.user|has_group:"Gerente" or request.user|has_group:"Aprobador Final"  %}
+                            <li><a href="/aprobar"><i class="fa fa-circle-o"></i>Aprobar</a></li>
+                            {% if  request.user|has_group:"Aprobador Final"  %}
+                            <li><a href="/cerrar"><i class="fa fa-circle-o"></i>Cerrar Jerarquia</a></li>
+                            <li><a href="/formulario_aprobador"><i class="fa fa-circle-o"></i>Agregar Valores</a></li>
+                            {% endif %}
+                            <li><a href="/descarga_especial"><i class="fa fa-circle-o"></i>Descargar Jerarquia Actual</a></li>
+                            {% endif %}
+                            <li><a href="/descarga_jerarquia"><i class="fa fa-circle-o"></i>Descarga Jerarquia</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="/logout">
+                            <i class="fa fa-power-off"></i> <span>Salir</span>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </section>
+            <!-- /.sidebar -->
+        </aside>
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+
+            <!-- Main content -->
+            <section class="content">
+
+                <!-- Contenido para las demas paginas -->
+                <div id="page">
+                {% block content %}{% endblock content %}
+                </div>
+                <div id="loading"></div>
+                <!-- /.box-footer-->
+
+                <!-- /.box -->
+
+            </section>
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+
+        <footer class="main-footer">
+            <div class="pull-right hidden-xs">
+                <b>Version</b> 1.0.0
+            </div>
+            <strong>Telefonica Analitica Tecnica</strong>
+        </footer>
+
+        <!-- jQuery 3 -->
+        <script src="{% static 'adminlte/bower_components/jquery/dist/jquery.min.js' %}"></script>
+        <!-- jQuery UI 1.11.4 -->
+        <script src="{% static 'adminlte/bower_components/jquery-ui/jquery-ui.min.js' %}"></script>
+        <!-- Bootstrap 3.3.7 -->
+        <script src="{% static 'adminlte/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+        <!-- SlimScroll -->
+        <script src="{% static 'adminlte/bower_components/jquery-slimscroll/jquery.slimscroll.min.js' %}"></script>
+        <!-- FastClick -->
+        <script src="{% static 'adminlte/bower_components/fastclick/lib/fastclick.js' %}"></script>
+
+        <!-- Datepicker JS -->
+        <script type="text/javascript" src="{% static 'adminlte/bower_components/bootstrap-daterangepicker/moment.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'adminlte/bower_components/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
+        <link rel="stylesheet" href="{% static 'adminlte/bower_components/bootstrap-daterangepicker/daterangepicker.css' %}">
+        <script>
+            {%if not user.is_authenticated %}
+            $("ul.nav.navbar-nav.navbar-right").css("display", "none");
+           {% endif %}
+        </script>
+        <!-- Collapse and sortable box -->
+        <script src="{% static 'adminlte/dist/js/adminlte.min.js' %}"></script>
+        <script src="{% static 'adminlte/dist/js/pages/dashboard.js' %}"></script>
+        <script>
+        function onReady(callback) {
+    var intervalID = window.setInterval(checkReady, 1000);
+
+    function checkReady() {
+        if (document.getElementsByTagName('body')[0] !== undefined) {
+            window.clearInterval(intervalID);
+            callback.call(this);
+        }
+    }
+}
+
+function show(id, value) {
+    document.getElementById(id).style.display = value ? 'block' : 'none';
+}
+
+onReady(function () {
+    show('page', true);
+    show('loading', false);
+});
+        </script>
+        <style>
+        #loading {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(192, 192, 192, 0.5);
+    background-image: url("{% static 'w8.gif' %}");
+    /* background-image: url("http://i.stack.imgur.com/MnyxU.gif"); */
+    background-repeat: no-repeat;
+    background-position: center;
+}
+        </style>
+
+        {% block extra_style %}{% endblock extra_style %} {% block extra_js %}{% endblock extra_js %}
+</body>
+</html>

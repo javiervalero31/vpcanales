@@ -1,0 +1,31 @@
+# Django
+*.log
+*.pot
+*.pyc
+result.json
+__pycache__/
+db.sqlite3
+local_settings.py
+media
+
+# Python virtualenv
+venv
+virtualenv
+staticfiles
+result.json
+
+# Editors
+.vscode
+.idea
+
+# Jupyter django
+jupyter django
+
+# frontend
+node_modules/
+webpack-stats.dev.json
+webpack-stats.prod.json
+
+# Old code
+views viejos.txt
+views viejos.py

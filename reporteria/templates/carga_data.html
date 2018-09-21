@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+<div id="page-wrapper">
+   <div class="container-fluid">
+      <div class="row">
+         <div class="container">
+            <div class="jumbotron" style='margin:0px 0px 0px -45px' >
+               <h2>
+               Cargar Información</h1>
+
+               <div class="col">
+                  <!-- Custom tabs (Charts with tabs)-->
+                  <div class="nav-tabs-custom">
+                     <!-- Tabs within a box -->
+                     <ul class="nav nav-tabs pull-right">
+                        <li class="pull-left header">
+                           <i class="fa fa-inbox"></i>Carga data</li>
+
+
+                        <li class="active"><a href="#jerarquia"  data-toggle="tab">Cargar Jerarquia</a></li>
+                        
+                        <li><a href="#actividad" data-toggle="tab">Cargar Actividad</a></li>
+
+                        <li><a href="#bajas" data-toggle="tab">Cargar Bajas</a></li>
+
+                        <li><a href="#cuotas" data-toggle="tab">Cargar Cuotas</a></li>
+
+                     </ul>
+                     <div class="tab-content">
+
+
+
+
+                        <div class="active tab-pane" id="jerarquia">
+                           <form method="POST" enctype="multipart/form-data" id="form"> {% csrf_token %}
+                              {{fj.as_p}}
+                              <input type="submit" name="fj" value="Cargar Informacion">
+                           </form>
+                        </div>
+
+
+                        <div class="tab-pane" id="actividad">
+                           <form method="POST" enctype="multipart/form-data" id="form"> {% csrf_token %}
+                              {{fa.as_p}}
+                              <input type="submit" name="fa" value="Cargar Informacion">
+                           </form>
+                        </div>
+
+
+                        <div class="tab-pane" id="bajas">
+                           <form method="POST" enctype="multipart/form-data" id="form"> {% csrf_token %}
+                              {{fba.as_p}}
+                              <input type="submit" name="fba" value="Cargar Informacion">
+                           </form>
+                        </div>
+
+
+                        <div class="tab-pane" id="cuotas">
+                           <form method="POST" enctype="multipart/form-data" id="form"> {% csrf_token %}
+                              {{fcuota.as_p}}
+                              <input type="submit" name="fcuota" value="Cargar Informacion">
+                           </form>
+                        </div>
+
+
+
+
+
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block extrahead %}
+<!-- CSS del tablesorter -->
+  <link rel="stylesheet" href="{% static 'tablesorter-master/css/theme.grey.css' %}">
+  <!-- Date picker CSS -->
+  <link rel="stylesheet" href="{% static 'datepicker/css/daterangepicker.css' %}">
+  <link rel="stylesheet" href="{% static 'amcharts/plugins/export/export.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css' %}">
+
+<!-- Pestañas -->
+
+  <link rel="stylesheet" href="{% static 'css/pestanas.css' %}">
+  <!-- Google Font -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+{% endblock %}
+{% block content %}
+
+<div class="row">
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-aqua">
+            <div class="inner">
+              <h3>{{tescaladas}}</h3>
+
+              <font size="4">Total Escaladas</font>
+            </div>
+            <div class="icon">
+              <i class="fa fa-check"></i>
+            </div>
+
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-yellow">
+            <div class="inner">
+              <h3>{{treclamos}}<sup style="font-size: 20px"></sup></h3>
+
+              <font size="4">Total Reclamos</font>
+            </div>
+            <div class="icon">
+              <i class="ion ion-sad"></i>
+            </div>
+
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-green">
+            <div class="inner">
+              <h3>{{tsolicitud}}</h3>
+
+              <font size="4">Total Solicitudes</font>
+            </div>
+            <div class="icon">
+              <i class="ion ion-person-add"></i>
+            </div>
+
+          </div>
+        </div>
+
+
+        <!-- ./col -->
+</div>
+
+<div class="nav-tabs-custom">
+  <ul class="nav nav-tabs pull-right">
+    <li class="pull-left header"><i class="fa fa-check"></i>Incidencias Escaladas</li>
+    <li class="pull-left header">Desde: {{start}} Hasta: {{end}}</li>
+
+    <li class="active"><a href="#escaladas" data-toggle="tab">Escaladas</a></li>
+    <li><a href="#detalle" data-toggle="tab">Detalle</a></li>
+    <li><a href="#rango" data-toggle="tab">Rango</a></li>
+
+
+  </ul>
+  <div class="tab-content">
+    <div class="active tab-pane" id="escaladas">
+        <div id="chartdiv"></div>
+    </div>
+    <!-- /.tab-pane -->
+    <div class="tab-pane" id="detalle">
+
+        {{tabla|safe}}
+    </div>
+    <!-- /.tab-pane -->
+
+    <div class="tab-pane" id="rango">
+
+
+
+      <div style="height: 30px;"></div>
+
+
+      <form method="POST" name="formu" id="msform" enctype="multipart/form-data"> {% csrf_token %}
+      <div class="form-group">
+        <div class="col-xs-4">
+        <label>Rango:</label>
+        <input type="text" class="form-control center-block" name="daterange">
+        </div>
+        <div style="height: 30px;"></div>
+        <div style="height: 30px;"></div>
+      <div class="box-footer">
+        <button type="submit" class="btn btn-info pull-right" value="Submit">Buscar</button>
+      </div>
+      </div>
+    </form>
+
+    </div>
+    <!-- /.tab-pane -->
+  </div>
+  <!-- /.tab-content -->
+</div>
+
+
+{% block extra_js %}
+
+<!-- Include Date Range Picker -->
+  <script type="text/javascript">
+     $('input[name="daterange"]').daterangepicker(
+  {
+  locale: {
+    format: 'DD-MM-YYYY',
+    separator: ' hasta ',
+  },
+
+
+  },)
+  </script>
+
+<!-- Amcharts -->
+<script src="{% static 'amcharts/amcharts.js' %}"></script>
+<script src="{% static 'amcharts/pie.js' %}"></script>
+<script src="{% static 'amcharts/plugins/export/export.min.js' %}"></script>
+<script src="{% static 'amcharts/themes/light.js' %}"></script>
+
+
+<script src="{% static 'adminlte/bower_components/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'adminlte/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
+
+
+
+
+<!-- Chart code -->
+<script>
+var chart = AmCharts.makeChart("chartdiv", {
+  "type": "pie",
+  "startDuration": 0,
+   "theme": "light",
+  "addClassNames": true,
+  "legend":{
+   	"position":"right",
+    "marginRight":100,
+    "autoMargins":false
+  },
+  "innerRadius": "30%",
+  "defs": {
+    "filter": [{
+      "id": "shadow",
+      "width": "200%",
+      "height": "200%",
+      "feOffset": {
+        "result": "offOut",
+        "in": "SourceAlpha",
+        "dx": 0,
+        "dy": 0
+      },
+      "feGaussianBlur": {
+        "result": "blurOut",
+        "in": "offOut",
+        "stdDeviation": 5
+      },
+      "feBlend": {
+        "in": "SourceGraphic",
+        "in2": "blurOut",
+        "mode": "normal"
+      }
+    }]
+  },
+  "dataProvider": {{grafico|safe}},
+  "valueField": "total",
+  "titleField": "canal",
+  "export": {
+    "enabled": true
+  }
+});
+
+chart.addListener("init", handleInit);
+
+chart.addListener("rollOverSlice", function(e) {
+  handleRollOver(e);
+});
+
+function handleInit(){
+  chart.legend.addListener("rollOverItem", handleRollOver);
+}
+
+function handleRollOver(e){
+  var wedge = e.dataItem.wedge.node;
+  wedge.parentNode.appendChild(wedge);
+}
+</script>
+<script src="{% static 'js/tabla.js' %}"></script>
+
+<!-- Tabla -->
+{% endblock %}
+
+
+
+
+{% block extra_style %}
+<!-- Amcharts -->
+<style>
+#chartdiv {
+  width: 100%;
+  height: 500px;
+  font-size: 11px;
+}
+
+.amcharts-pie-slice {
+  transform: scale(1);
+  transform-origin: 50% 50%;
+  transition-duration: 0.3s;
+  transition: all .3s ease-out;
+  -webkit-transition: all .3s ease-out;
+  -moz-transition: all .3s ease-out;
+  -o-transition: all .3s ease-out;
+  cursor: pointer;
+  box-shadow: 0 0 30px 0 #000;
+}
+
+.amcharts-pie-slice:hover {
+  transform: scale(1.1);
+  filter: url(#shadow);
+}
+</style>
+<!-- Pestañas -->
+
+{% endblock %}
+{% endblock %}

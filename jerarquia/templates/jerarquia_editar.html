@@ -1,0 +1,386 @@
+{% load staticfiles %}
+
+<script>
+            {% if messages %}
+                {% for message in messages %}
+                    alert(message);
+                {% endfor %}
+            {% endif %}
+        </script>
+
+<div class="container">
+    <div class="modal-content">
+        <div class="modal-header">
+          <div class="col-md-4 col-md-offset-5"><h3 class="modal-title">{{ nombre|safe }}</h3></div>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <div class="row">
+                <div class="col-md-12">
+                    <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
+                        <div class="row">
+
+
+                          {%if form%}
+                          <div class="row">
+                            <div class="col-md-10 col-md-offset-1">
+                                {{form.a000sap.label_tag}}
+                                {{form.a000sap}}
+                                <br>{{form.codigo_unico.label_tag}}
+                                <br>{{form.codigo_unico}}
+                                <br>{{form.visitas.label_tag}}
+                                <br>{{form.visitas}}
+                                <br>{{form.latitud.label_tag}}
+                                <br>{{form.latitud}}
+                                <br>{{form.longitud.label_tag}}
+                                <br>{{form.longitud}}
+                                <br>{{form.direccion_fisica.label_tag}}
+                                <br>{{form.direccion_fisica}}
+                                <br>{{form.direccion_fiscal.label_tag}}
+                                <br>{{form.direccion_fiscal}}
+                                <br>{{form.direccion_key.label_tag}}
+                                <br>{{form.direccion_key}}
+                                <br>
+                                <div class="row ">
+                                    <div class="col-md-8">
+                                        {{form.estado_key.label_tag}} {{form.estado_key}}
+                                    </div>
+                                    <div class="col-md-3 top-buffer-form">
+
+                                        <input type="text" id="estado" class="form-control placeholder" placeholder="Filtra escribiendo aqui" />
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        {{form.municipio_key.label_tag}} {{form.municipio_key}}
+                                    </div>
+                                    <div class="col-md-3 top-buffer-form">
+
+                                        <input type="text" id="municipio" class="form-control placeholder" placeholder="Filtra escribiendo aqui" />
+                                    </div>
+                                </div>
+                                <br>{{form.persona_contacto.label_tag}}
+                                <br>{{form.persona_contacto}}
+                                <br>{{form.persona_contacto.label_tag}}
+                                <br>{{form.persona_contacto}}
+                                <br>{{form.correo_tienda.label_tag}}
+                                <br>{{form.correo_tienda}}
+                                <br>{{form.correo_empresario.label_tag}}
+                                <br>{{form.correo_empresario}}
+                                <br>{{form.telefono_empresario.label_tag}}
+                                <br>{{form.telefono_empresario}}
+                                <br>{{form.telefono_tienda.label_tag}}
+                                <br>{{form.telefono_tienda}}
+                                <br>{{form.hora_apertura.label_tag}}
+                                <br>{{form.hora_apertura}}
+                                <br>{{form.hora_cierre.label_tag}}
+                                <br>{{form.hora_cierre}}
+                                <br>{{form.empleados.label_tag}}
+                                <br>{{form.empleados}}
+                                <br>{{form.punto_rojo.label_tag}}
+                                <br>{{form.punto_rojo}}
+                                <br>
+                                <br>{{form.caso_remedy.label_tag}}
+                                <br>{{form.caso_remedy}}
+                                <br>{{form.sustitucion.label_tag}}
+                                <br>{{form.sustitucion}}
+                                <br>
+
+                                  <div class="row cuadro top-buffer">
+                                    <h4>Meses a Visitar:</h4>
+                                    <br>
+                                    {{form.enero.label_tag}}
+                                    {{form.enero}}
+                                    {{form.febrero.label_tag}}
+                                    {{form.febrero}}
+                                    {{form.marzo.label_tag}}
+                                    {{form.marzo}}
+                                    {{form.abril.label_tag}}
+                                    {{form.abril}}
+                                    {{form.mayo.label_tag}}
+                                    {{form.mayo}}
+                                    {{form.junio.label_tag}}
+                                    {{form.junio}}
+                                    {{form.julio.label_tag}}
+                                    {{form.julio}}
+                                    {{form.agosto.label_tag}}
+                                    {{form.agosto}}
+                                    {{form.septiembre.label_tag}}
+                                    {{form.septiembre}}
+                                    {{form.octubre.label_tag}}
+                                    {{form.octubre}}
+                                    {{form.noviembre.label_tag}}
+                                    {{form.noviembre}}
+                                    {{form.diciembre.label_tag}}
+                                    {{form.diciembre}}
+                                    </div>
+                                    <br>
+
+                                <br>{{form.tipo_key.label_tag}}
+                                <br>{{form.tipo_key}}
+                                <br>{{form.tipo_aa_key.label_tag}}
+                                <br>{{form.tipo_aa_key}}
+                                <br>{{form.oficina_key.label_tag}}
+                                <br>{{form.oficina_key}}
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        {{form.codigo_deudor_key.label_tag}} {{form.codigo_deudor_key}}
+                                    </div>
+                                    <div class="col-md-3 top-buffer-form">
+
+                                        <input type="text" id="codigo_deudor" class="form-control placeholder" placeholder="Filtra escribiendo aqui" />
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        {{form.nombre_key.label_tag}} {{form.nombre_key}}
+                                    </div>
+                                    <div class="col-md-3 top-buffer-form">
+
+                                        <input type="text" id="nombre" class="form-control placeholder" placeholder="Filtra escribiendo aqui" />
+                                    </div>
+                                </div>
+                                <br>{{form.region_key.label_tag}}
+                                <br>{{form.region_key}}
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-8">
+
+                                        {{form.coordinador_key.label_tag}} {{form.coordinador_key}}
+                                    </div>
+                                    <div class="col-md-3 top-buffer-form">
+
+                                        <input type="text" id="coordinador" class="form-control placeholder" placeholder="Filtra escribiendo aqui" />
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-8">
+
+                                        {{form.lider_key.label_tag}} {{form.lider_key}}
+                                    </div>
+                                    <div class="col-md-3 top-buffer-form">
+
+                                        <input type="text" id="lider" class="form-control placeholder" placeholder="Filtra escribiendo aqui" />
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        {{form.gerente_key.label_tag}} {{form.gerente_key}}
+                                    </div>
+                                    <div class="col-md-3 top-buffer-form">
+
+                                        <input type="text" id="gerente" class="form-control placeholder" placeholder="Filtra escribiendo aqui" />
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        {{form.centro_recarga_key.label_tag}} {{form.centro_recarga_key}}
+                                    </div>
+                                    <div class="col-md-3 top-buffer-form">
+
+                                        <input type="text" id="centro_recarga" class="form-control placeholder" placeholder="Filtra escribiendo aqui" />
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        {{form.distribuidor_key.label_tag}} {{form.distribuidor_key}}
+                                    </div>
+                                    <div class="col-md-3 top-buffer-form">
+
+                                        <input type="text" id="distribuidor" class="form-control placeholder" placeholder="Filtra escribiendo aqui" />
+                                    </div>
+                                </div>
+                                <br>{{form.status_key.label_tag}} {{form.status_key}}
+
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        {{form.rif_key.label_tag}} {{form.rif_key}}
+                                    </div>
+                                    <div class="col-md-3 top-buffer-form">
+
+                                        <input type="text" id="rif" class="form-control placeholder" placeholder="Filtra escribiendo aqui" />
+                                    </div>
+                                </div>
+
+                                </div>
+                            </div>
+                            <br>
+                            <br>
+                            {%endif%}
+                            <div class="row">
+                                <div class="col-md-5 col-lg-offset-1">
+                                    {% if original %}
+                                    <h1>Registro Original</h1>
+
+                                    {{original.as_p}}
+                                    {% endif %}
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <!-- {{aprobar|safe}} -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                  {% if original %}
+                                  <h1>Solicitud de Cambio</h1>
+                                    {{cambio.as_p}}
+                                    {% endif %}
+                                     <!-- {{rechazo|safe}} -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 col-md-offset-5">
+                            {{solicitar|safe}}
+                            <div class = "row top-buffer">
+                            {{aprobar|safe}}{{agregar|safe}}
+                          </div>
+                          <div class = "row top-buffer">
+                            {{rechazo|safe}}
+                          </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $.validate({
+            lang: 'es',
+            modules : 'html5,date'
+          });
+          $('input[type=text]').val (function () {
+              return this.value.toUpperCase();
+          })
+    </script>
+    <script>
+        $('#estado').keyup(function () {
+          var valthis = $(this).val().toLowerCase();
+          var num = 0;
+          $('select#id_estado_key>option').each(function () {
+              var text = $(this).text().toLowerCase();
+              if(text.indexOf(valthis) !== -1)
+                  {$(this).show(); $(this).prop('selected',true);}
+              else{$(this).hide();}
+               });
+    });
+    </script>
+    <script>
+        $('#municipio').keyup(function () {
+          var valthis = $(this).val().toLowerCase();
+          var num = 0;
+          $('select#id_municipio_key>option').each(function () {
+              var text = $(this).text().toLowerCase();
+              if(text.indexOf(valthis) !== -1)
+                  {$(this).show(); $(this).prop('selected',true);}
+              else{$(this).hide();}
+               });
+    });
+    </script>
+
+
+
+    <script>
+        $('#codigo_deudor').keyup(function () {
+          var valthis = $(this).val().toLowerCase();
+          var num = 0;
+          $('select#id_codigo_deudor_key>option').each(function () {
+              var text = $(this).text().toLowerCase();
+              if(text.indexOf(valthis) !== -1)
+                  {$(this).show(); $(this).prop('selected',true);}
+              else{$(this).hide();}
+               });
+    });
+    </script>
+    <script>
+        $('#nombre').keyup(function () {
+          var valthis = $(this).val().toLowerCase();
+          var num = 0;
+          $('select#id_nombre_key>option').each(function () {
+              var text = $(this).text().toLowerCase();
+              if(text.indexOf(valthis) !== -1)
+                  {$(this).show(); $(this).prop('selected',true);}
+              else{$(this).hide();}
+               });
+    });
+    </script>
+    <script>
+        $('#region').keyup(function () {
+          var valthis = $(this).val().toLowerCase();
+          var num = 0;
+          $('select#id_region_key>option').each(function () {
+              var text = $(this).text().toLowerCase();
+              if(text.indexOf(valthis) !== -1)
+                  {$(this).show(); $(this).prop('selected',true);}
+              else{$(this).hide();}
+               });
+    });
+    </script>
+    <script>
+        $('#coordinador').keyup(function () {
+          var valthis = $(this).val().toLowerCase();
+          var num = 0;
+          $('select#id_coordinador_key>option').each(function () {
+              var text = $(this).text().toLowerCase();
+              if(text.indexOf(valthis) !== -1)
+                  {$(this).show(); $(this).prop('selected',true);}
+              else{$(this).hide();}
+               });
+    });
+    </script>
+
+    <script>
+        $('#centro_recarga').keyup(function () {
+          var valthis = $(this).val().toLowerCase();
+          var num = 0;
+          $('select#id_centro_recarga_key>option').each(function () {
+              var text = $(this).text().toLowerCase();
+              if(text.indexOf(valthis) !== -1)
+                  {$(this).show(); $(this).prop('selected',true);}
+              else{$(this).hide();}
+               });
+    });
+    </script>
+    <script>
+        $('#distribuidor').keyup(function () {
+          var valthis = $(this).val().toLowerCase();
+          var num = 0;
+          $('select#id_distribuidor_key>option').each(function () {
+              var text = $(this).text().toLowerCase();
+              if(text.indexOf(valthis) !== -1)
+                  {$(this).show(); $(this).prop('selected',true);}
+              else{$(this).hide();}
+               });
+    });
+    </script>
+
+    <script>
+        $('#rif').keyup(function () {
+          var valthis = $(this).val().toLowerCase();
+          var num = 0;
+          $('select#id_rif_key>option').each(function () {
+              var text = $(this).text().toLowerCase();
+              if(text.indexOf(valthis) !== -1)
+                  {$(this).show(); $(this).prop('selected',true);}
+              else{$(this).hide();}
+               });
+    });
+    </script>
+    <style>
+        .top-buffer { margin-top:20px; }
+        .top-buffer-form { margin-top:24px; }
+        .indent{ padding-left: 1.8em }
+        .cuadro{padding: 1em;
+        border: 1px solid #CCC;
+        border-radius: 1em;}
+        .placeholder{border-color: orange}
+
+    </style>
+    <style>
+    </style>

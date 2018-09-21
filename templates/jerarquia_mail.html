@@ -1,0 +1,59 @@
+<style>
+	/* Shrink Wrap Layout Pattern CSS */
+	@media only screen and (max-width: 599px) {
+        td[class="hero"] img {
+            width: 100%;
+            height: auto !important;
+        }
+	    td[class="pattern"] td{
+	        width: 100%;
+	    }
+	}
+</style>
+
+<table cellpadding=0 cellspacing="0" align="center">
+    <tr>
+        <td class="pattern" width="600">
+            <table cellpadding="0" cellspacing="0">
+                <tr>
+                    <td class="hero" align="center">
+											{% if estado == 'aprobado' %}
+                        <img src="https://www.freeiconspng.com/uploads/checked-correct-right-yes-checkmark-12.png" width="250" height="200" alt="" style="display: block; border: 0;" />
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left" style="font-family: arial,sans-serif; color: #333;" >
+                      <br>
+                        <h1 align="center">Vp. Canales</h1>
+                        <br>
+                        <h1 align="center">Gestor de Jerarquía</h1>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left" style="font-family: arial,sans-serif; font-size: 14px; line-height: 20px !important; color: #666; padding-bottom: 20px;">
+                        Se le informa que su solicitud de modificación sobre el agente {{codigo}} NO fue aprobada por ende no se vera reflejada en la siguiente jerarquía.
+                    </td>
+                </tr>
+								{%endif%}
+								{% if estado == 'rechazado' %}
+									<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png" width="250" height="200" alt="" style="display: block; border: 0;" />
+							</td>
+					</tr>
+					<tr>
+							<td align="left" style="font-family: arial,sans-serif; color: #333;" >
+								<br>
+									<h1 align="center">Vp. Canales</h1>
+									<br>
+									<h1 align="center">Gestor de Jerarquía</h1>
+							</td>
+					</tr>
+					<tr>
+							<td align="left" style="font-family: arial,sans-serif; font-size: 14px; line-height: 20px !important; color: #666; padding-bottom: 20px;">
+									Se le informa que su solicitud de modificación sobre el agente {{codigo}} fue aprobada y se verá reflejada en la Jerarquía del próximo mes.
+							</td>
+					</tr>
+					{%endif%}
+            </table>
+        </td>
+    </tr>
+</table>

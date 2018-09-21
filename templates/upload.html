@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div id="page-wrapper">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="container">
+				<div class="jumbotron" style='margin:0px 0px 0px -45px' >
+
+					{% if user.is_authenticated %}
+						<h2>Cargar Información</h1>
+					{% endif %}
+
+					<form method="POST" enctype="multipart/form-data"> {% csrf_token %}
+
+	    				{{form.as_p}}
+	    				<input type="submit" value="Cargar Informacion">
+
+					</form>
+
+
+				</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

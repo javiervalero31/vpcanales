@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+<script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+<script src="https://www.amcharts.com/lib/3/serial.js"></script>
+<script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+<script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/vue-select@latest"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<style>
+        .modal-active{
+            display:block;
+        }
+        #chartdiv {
+	width		: 100%;
+	height		: 500px;
+	font-size	: 11px;
+}			    
+</style>
+{% endblock extrahead %}
+
+
+{% block content %}
+<div class="container">
+        <h1></h1>
+        <div class="notification">
+            Telefonica <strong>Elegimos Todo.</strong>
+        </div>
+    
+
+</div>
+<div id="root">
+        <p v-text="msg">
+        </p>
+        <ul v-for="direction in directions">
+            <li v-text="direction.nombre" v-if="!direction.activo"></li>
+        </ul>
+        <button type="button"
+            class="btn btn-info" 
+            @click="showModal=true"
+        >
+            Preguntas Frecuentes
+        </button>
+
+
+        <v-select label="nombre" :options="options"></v-select>
+
+        
+
+        <modal v-show="showModal" name="Preguntas Frecuentes ?" @close="showModal = false">
+                <p><b>DESJERARQUIZADO:</b> Sucursal retirada de la Jerarquia actual y agrupada bajo el mismo nombre.</p>
+                <div id="chartdiv"></div>
+        </modal>
+        
+
+
+
+</div>
+
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+var chart = AmCharts.makeChart( "chartdiv", {
+  "type": "serial",
+  "theme": "light",
+  "dataProvider": [ {
+    "country": "USA",
+    "visits": 2025
+  }, {
+    "country": "China",
+    "visits": 1882
+  }, {
+    "country": "Japan",
+    "visits": 1809
+  }, {
+    "country": "Germany",
+    "visits": 1322
+  }, {
+    "country": "UK",
+    "visits": 1122
+  }, {
+    "country": "France",
+    "visits": 1114
+  }, {
+    "country": "India",
+    "visits": 984
+  }, {
+    "country": "Spain",
+    "visits": 711
+  }, {
+    "country": "Netherlands",
+    "visits": 665
+  }, {
+    "country": "Russia",
+    "visits": 580
+  }, {
+    "country": "South Korea",
+    "visits": 443
+  }, {
+    "country": "Canada",
+    "visits": 441
+  }, {
+    "country": "Brazil",
+    "visits": 395
+  } ],
+  "valueAxes": [ {
+    "gridColor": "#FFFFFF",
+    "gridAlpha": 0.2,
+    "dashLength": 0
+  } ],
+  "gridAboveGraphs": true,
+  "startDuration": 1,
+  "graphs": [ {
+    "balloonText": "[[category]]: <b>[[value]]</b>",
+    "fillAlphas": 0.8,
+    "lineAlpha": 0.2,
+    "type": "column",
+    "valueField": "visits"
+  } ],
+  "chartCursor": {
+    "categoryBalloonEnabled": false,
+    "cursorAlpha": 0,
+    "zoomable": false
+  },
+  "categoryField": "country",
+  "categoryAxis": {
+    "gridPosition": "start",
+    "gridAlpha": 0,
+    "tickPosition": "start",
+    "tickLength": 20
+  },
+  "export": {
+    "enabled": true
+  }
+
+} );
+// Components
+Vue.component('modal', {
+    props: ['name'],
+    template:
+    ` 
+    <div class="modal fade in modal-active">
+            <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" @click="$emit('close')" class="close"><span >&times;</span></button>
+                            <h4 class="modal-title">
+                                <div v-text="name"></div>
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                                <slot></slot>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" @click="$emit('close')">Entendido</button>
+                        </div>
+                </div>
+            </div>
+        </div>
+    `
+});
+
+Vue.component('v-select', VueSelect.VueSelect)
+
+
+let app = new Vue({
+            el:"#root",
+            delimiters: ['[[',']]'],
+            data:{
+                msg: "Direcciones",
+                directions: [],
+                dropDownActive: false,
+                showModal: false,
+                // options: [
+                //     'foo',
+                //     'bar',
+                //     'baz'
+                // ]
+                options: this.directions
+            },
+            methods:{
+                isActive() {
+                    this.dropDownActive = !this.dropDownActive
+                }
+            }
+            ,
+            created () {
+                fetch('/recargas/api/P2P/recargas_resumen/?tiempo__fecha__gte=2018-05-01&tiempo__fecha__lte=2018-05-22')
+                .then( response => response.json())
+                .then( json => {
+                    console.log(json)
+                    console.log(json.lideres)
+                    this.directions = json.lideres  
+                })
+            }
+        })
+
+</script>
+{% endblock extra_js %}
+

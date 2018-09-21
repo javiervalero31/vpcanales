@@ -1,0 +1,19 @@
+{% extends 'adminlte/lib/_main_sidebar.html' %}
+
+{% block nav_links %}
+    <li>
+<<<<<<< HEAD
+        <a href="/templates/base.html">
+=======
+        <a href="{% url 'recargas:index' %}">
+>>>>>>> 7b815bf822e125d2cf136f37e39914f14b6983e4
+            <i class="fa fa-dashboard"></i> <span>Home</span>
+        </a>
+    </li>
+    <li>
+        <a href="/admin">
+            <i class="fa fa-user"></i> <span>Administrar</span>
+        </a>
+    </li>
+    <li><a href="{% url 'recargas:index' %}"><i class="fa fa-bar-chart"></i> <span>Recargas</span></a></li>
+{% endblock nav_links %}

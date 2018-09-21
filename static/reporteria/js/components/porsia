@@ -1,0 +1,77 @@
+<div>
+ <div class="row">
+    <div class="panel panel-default">
+       <div class="panel panel-heading">
+          <h3>
+            [[arg.name]]
+        </h3>
+       </div>
+
+       <div class="panel panel-body">
+        <div class="row">
+          <div class="col-md-4">
+                <div class="form-group">
+                  <label>Fecha</label>
+                  <slot name="fecha"></slot>
+                </div>
+
+          </div>
+
+          <div class="col-md-4">
+                <div class="form-group">
+                  <label for="exampleFormControlSelect1">Código de Agente</label>
+                  <slot name="codigo_agente"></slot>
+                </div>
+          </div>
+
+         <div class="col-md-4">
+                <div class="form-group">
+                  <label for="exampleFormControlSelect1">Canal de Venta</label>
+                  <slot name="canal"></slot>
+                </div>
+          </div>
+
+          <div class="col-md-4">
+                <div class="form-group">
+                  <label for="exampleFormControlSelect1">Gerente</label>
+                  <slot name="gerente"></slot>
+                </div>
+          </div>
+
+          <div class="col-md-4">
+                <div class="form-group">
+                  <label for="exampleFormControlSelect1">Líder</label>
+                  <slot name="lider"></slot>
+                </div>
+          </div>
+
+          </div>
+          <div id="chartdiv"></div>
+       </div>
+    </div>
+ </div>
+</div>
+
+
+
+SELECTOR
+
+
+<div class="row">
+
+
+  <div class="col-sm-3">
+    <h3>Indicadores Actividad Comercial</h3>
+
+    <ul class="list-group" >
+      <li class="list-group-item">
+        <input v-model="graphic_name" type="text" placeholder="Buscar grafico..." class="form-control">
+      </li>
+
+
+      <div v-for="i in searchTitle">
+        <a class="list-group-item" @click="consultingAPI(i)">[[i]]</a>
+      </div>
+
+    </ul>
+  </div>

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load render_bundle from webpack_loader %}
+{% block extrahead %}
+<script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+<script src="https://www.amcharts.com/lib/3/serial.js"></script>
+<script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+<script src="//cdn.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+<script src="{% static 'js/amcharts/plugins/export/lang/es.js' %}"></script>
+<script src="{% static 'js/amcharts/lang/es.js' %}"></script>
+<link  type="text/css" href="//cdn.amcharts.com/lib/3/plugins/export/export.css" rel="stylesheet">
+
+{% endblock %}
+{% block content %}
+    <div id="root">
+    </div>
+    {% render_bundle 'main' %}
+{% endblock %}

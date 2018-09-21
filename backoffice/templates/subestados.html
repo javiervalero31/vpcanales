@@ -1,0 +1,420 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block extrahead %}
+<!-- CSS del tablesorter -->
+  <link rel="stylesheet" href="{% static 'tablesorter-master/css/theme.grey.css' %}">
+  <!-- Date picker CSS -->
+  <link rel="stylesheet" href="{% static 'datepicker/css/daterangepicker.css' %}">
+  <link rel="stylesheet" href="{% static 'amcharts/plugins/export/export.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css' %}">
+
+<!-- Pestañas -->
+
+  <link rel="stylesheet" href="{% static 'css/pestanas.css' %}">
+
+  <!-- Google Font -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+{% endblock %}
+{% block content %}
+
+<div class="row">
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-aqua">
+            <div class="inner">
+              <h3>{{tresueltas}}</h3>
+
+              <font size="4">Total Resueltas</font>
+            </div>
+            <div class="icon">
+              <i class="fa fa-check"></i>
+            </div>
+
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-yellow">
+            <div class="inner">
+              <h3>{{treclamos}}<sup style="font-size: 20px"></sup></h3>
+
+              <font size="4">Total Reclamos</font>
+            </div>
+            <div class="icon">
+              <i class="ion-sad"></i>
+            </div>
+
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-green">
+            <div class="inner">
+              <h3>{{tsolicitud}}</h3>
+
+              <font size="4">Total Solicitudes</font>
+            </div>
+            <div class="icon">
+              <i class="ion ion-person-add"></i>
+            </div>
+
+          </div>
+        </div>
+
+     <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-red">
+            <div class="inner">
+              <h3>{{tme}}</h3>
+
+              <font size="4">Total Mal Escalado</font>
+            </div>
+            <div class="icon">
+              <i class="ion-minus-circled"></i>
+            </div>
+
+          </div>
+        </div>
+
+
+        <!-- ./col -->
+</div>
+
+<div class="nav-tabs-custom">
+  <ul class="nav nav-tabs pull-right">
+    <li class="pull-left header"><i class="fa fa-check"></i>Incidencias Resueltas</li>
+    <li class="pull-left header">Desde: {{start}} Hasta: {{end}}</li>
+    <li class="active"><a href="#resueltas" data-toggle="tab">Resueltas</a></li>
+    <li><a href="#detalle" data-toggle="tab">Sub Estado</a></li>
+    <li><a href="#bandejaresolutor" data-toggle="tab">Bandeja Resolutor</a></li>
+    <li><a href="#rango" data-toggle="tab">Rango</a></li>
+
+
+  </ul>
+  <div class="tab-content">
+    <div class="active tab-pane" id="resueltas">
+        <div id="chartdiv"></div>
+    </div>
+    <!-- /.tab-pane -->
+    <div class="tab-pane" id="detalle">
+
+        {{tabla|safe}}
+    </div>
+
+    <div class="tab-pane" id="bandejaresolutor">
+        {{tabledetail|safe}}
+    </div>
+    <!-- /.tab-pane -->
+
+    <div class="tab-pane" id="rango">
+
+
+
+      <div style="height: 30px;"></div>
+
+
+      <form method="POST" name="formu" id="msform" enctype="multipart/form-data"> {% csrf_token %}
+      <div class="form-group">
+        <div class="col-xs-4">
+        <label>Rango:</label>
+        <input type="text" class="form-control center-block" name="daterange">
+        </div>
+        <div style="height: 30px;"></div>
+        <div style="height: 30px;"></div>
+      <div class="box-footer">
+        <button type="submit" class="btn btn-info pull-right" value="Submit">Buscar</button>
+      </div>
+      </div>
+    </form>
+
+    </div>
+    <!-- /.tab-pane -->
+  </div>
+  <!-- /.tab-content -->
+</div>
+
+
+{% block extra_js %}
+
+
+<!-- Amcharts -->
+<script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+<script src="https://www.amcharts.com/lib/3/serial.js"></script>
+<script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+<link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+<script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+
+<!-- Tabla -->
+<script src="{% static 'adminlte/bower_components/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'adminlte/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
+<script src="{% static 'js/tabla.js' %}"></script>
+
+
+<!-- Chart code -->
+<script>
+var chart = AmCharts.makeChart( "chartdiv", {
+  "type": "serial",
+  "theme": "light",
+  "depth3D": 20,
+  "angle": 30,
+  "autoMargins": true,
+
+  "legend": {
+    "horizontalGap": 10,
+    "useGraphSettings": true,
+    "markerSize": 10
+  },
+  "dataProvider": {{grafico|safe}},
+  "valueAxes": [ {
+    "stackType": "regular",
+    "axisAlpha": 0,
+    "gridAlpha": 0
+  } ],
+  "graphs": [ {
+    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+    "fillAlphas": 0.8,
+    "labelText": "[[value]]",
+    "lineAlpha": 0.3,
+    "title": "ME",
+    "type": "column",
+    "color": "#000000",
+    "valueField": "MAL ESCALADO"
+  }, {
+    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+    "fillAlphas": 0.8,
+    "labelText": "[[value]]",
+    "lineAlpha": 0.3,
+    "title": "Anulado",
+    "type": "column",
+    "color": "#000000",
+    "valueField": "ANULADO"
+  }, {
+    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+    "fillAlphas": 0.8,
+    "labelText": "[[value]]",
+    "lineAlpha": 0.3,
+    "title": "Aplicar Procedimiento en I Nivel",
+    "type": "column",
+
+    "color": "#000000",
+    "valueField": "APLICAR PROCEDIMIENTO EN I NIVEL"
+  }, {
+    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+    "fillAlphas": 0.8,
+    "labelText": "[[value]]",
+    "lineAlpha": 0.3,
+    "title": "Asignado por Supervisor",
+    "type": "column",
+    "color": "#000000",
+    "valueField": "ASIGNADO POR SUPERVISOR"
+  }, {
+    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+    "fillAlphas": 0.8,
+    "labelText": "[[value]]",
+    "lineAlpha": 0.3,
+    "title": "Cancelado",
+    "type": "column",
+    "color": "#000000",
+    "valueField": "CANCELADO"
+  }, {
+    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+    "fillAlphas": 0.8,
+    "labelText": "[[value]]",
+    "lineAlpha": 0.3,
+    "title": "Cliente I/R",
+    "type": "column",
+    "color": "#000000",
+    "valueField": "CLIENTE INSTALADO / REPARADO"
+  },
+   {
+    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+    "fillAlphas": 0.8,
+    "labelText": "[[value]]",
+    "lineAlpha": 0.3,
+    "title": "Equipo Entregado",
+    "type": "column",
+    "color": "#000000",
+    "valueField": "EQUIPO ENTREGADO"
+  },
+  {
+    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+    "fillAlphas": 0.8,
+    "labelText": "[[value]]",
+    "lineAlpha": 0.3,
+    "title": "Equipo Entregado",
+    "type": "column",
+    "color": "#000000",
+    "valueField": "EQUIPO ENTREGADO"
+  },
+  {
+    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+    "fillAlphas": 0.8,
+    "labelText": "[[value]]",
+    "lineAlpha": 0.3,
+    "title": "No Acepta Oferta",
+    "type": "column",
+    "color": "#000000",
+    "valueField": "NO ACEPTA OFERTA"
+  },
+  {
+    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+    "fillAlphas": 0.8,
+    "labelText": "[[value]]",
+    "lineAlpha": 0.3,
+    "title": "No Procede",
+    "type": "column",
+    "color": "#000000",
+    "valueField": "NO PROCEDE"
+  },
+  {
+    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+    "fillAlphas": 0.8,
+    "labelText": "[[value]]",
+    "lineAlpha": 0.3,
+    "title": "No Procede Cobro",
+    "type": "column",
+    "color": "#000000",
+    "valueField": "NO PROCEDE COBRO"
+  },
+  {
+    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+    "fillAlphas": 0.8,
+    "labelText": "[[value]]",
+    "lineAlpha": 0.3,
+    "title": "No Procede Reconexion",
+    "type": "column",
+    "color": "#000000",
+    "valueField": "NO PROCEDE RECONEXION"
+  },
+  {
+    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+    "fillAlphas": 0.8,
+    "labelText": "[[value]]",
+    "lineAlpha": 0.3,
+    "title": "No Procede por Asignacion",
+    "type": "column",
+    "color": "#000000",
+    "valueField": "NO PROCEDE POR ASIGNACION"
+  },
+  {
+    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+    "fillAlphas": 0.8,
+    "labelText": "[[value]]",
+    "lineAlpha": 0.3,
+    "title": "Pendiente por Asignacion",
+    "type": "column",
+    "color": "#000000",
+    "valueField": "PENDIENTE POR ASIGNACION"
+  },
+  {
+    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+    "fillAlphas": 0.8,
+    "labelText": "[[value]]",
+    "lineAlpha": 0.3,
+    "title": "No Validacion del Cliente",
+    "type": "column",
+    "color": "#000000",
+    "valueField": "POR NO VALIDACION CON CLIENTE"
+  },
+  {
+    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+    "fillAlphas": 0.8,
+    "labelText": "[[value]]",
+    "lineAlpha": 0.3,
+    "title": "Solucionado",
+    "type": "column",
+    "color": "#000000",
+    "valueField": "SOLUCIONADO"
+  },
+  {
+    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+    "fillAlphas": 0.8,
+    "labelText": "[[value]]",
+    "lineAlpha": 0.3,
+    "title": "Solucionado ME",
+    "type": "column",
+    "color": "#000000",
+    "valueField": "SOLUCIONADO MAL ESCALADO"
+  },
+  {
+    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+    "fillAlphas": 0.8,
+    "labelText": "[[value]]",
+    "lineAlpha": 0.3,
+    "title": "Solucionado Sin Gestion D.",
+    "type": "column",
+    "color": "#000000",
+    "valueField": "SOLUCIONADO SIN GESTION DIRECTA"
+  },
+  {
+    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+    "fillAlphas": 0.8,
+    "labelText": "[[value]]",
+    "lineAlpha": 0.3,
+    "title": "Solucionado Automatico",
+    "type": "column",
+    "color": "#000000",
+    "valueField": "SOLUCIONADO AUTOMATICO"
+  },
+  {
+    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+    "fillAlphas": 0.8,
+    "labelText": "[[value]]",
+    "lineAlpha": 0.3,
+    "title": "Solucionado Por Masivo",
+    "type": "column",
+    "color": "#000000",
+    "valueField": "SOLUCIONADO POR MASIVO"
+  },
+  {
+    "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+    "fillAlphas": 0.8,
+    "labelText": "[[value]]",
+    "lineAlpha": 0.3,
+    "title": "Solucionado por mi Punto",
+    "type": "column",
+    "color": "#000000",
+    "valueField": "SOLUCIONADO POR MI PUNTO"
+  }],
+  "categoryField": "Grupo Resolutor",
+  "categoryAxis": {
+    "gridPosition": "start",
+    "axisAlpha": 0,
+    "gridAlpha": 0,
+    "position": "left",
+    "labelRotation": 35
+  },
+  "export": {
+    "enabled": true
+  }
+
+} );
+
+</script>
+<script type="text/javascript">
+   $('input[name="daterange"]').daterangepicker(
+{
+locale: {
+  format: 'DD-MM-YYYY',
+  separator: ' hasta ',
+},
+
+
+},)
+</script>
+{% endblock %}
+{% block extra_style %}
+<!-- Amcharts -->
+<style>
+#chartdiv {
+	width		: 100%;
+	height		: 600px;
+	font-size	: 11px;
+}
+</style>
+
+{% endblock %}
+{% endblock %}

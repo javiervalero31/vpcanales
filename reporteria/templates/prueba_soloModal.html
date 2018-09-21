@@ -1,0 +1,391 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+<script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+<script src="https://www.amcharts.com/lib/3/serial.js"></script>
+<script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+<link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+<script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+
+
+
+<style type="text/css">
+#chartdiv {
+  width: 100%;
+  height: 400px;
+}
+</style>
+
+
+
+
+
+<!-- Bloque Activaciones -->
+<div class="col-md-6">
+  <!-- Application buttons -->
+  <div class="box">
+    <div class="box-header">
+      <h3 class="box-title">Activaciones Vs Cuota</h3>
+    </div>
+    <div class="box-body">
+
+
+      <p>Al hacer click en cualquier boton podras ver de manera grafica la informacion solicitada:</p>
+      <a class="btn btn-app" class="btn btn-primary btn-lg" data-toggle="modal" onclick="ModalClick();">
+        <i class="fa fa-edit"></i> Modal
+      </a>
+
+
+    </div>
+    <!-- /.box-body -->
+
+  </div>
+  <!-- /.box -->
+
+</div>
+<!-- ************* Modal *************** -->
+<div id="app">
+<div class="modal fade bd-example-modal-lg " id="myModal"  aria-labelledby="myModalLabel" aria-hidden="true" >
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+              
+                <h4 class="modal-title" id="myModalLabel">Activaciones Vs Cuota</h4>
+
+            </div>
+            <div class="modal-body">
+              
+              <form id="chartform" v-on:change="formOnChange" @submit.prevent="getFormValues">
+              
+              <div class="row">
+                
+                <div class="col-md-4">
+                  
+                  <div class="form-group">
+                    
+                    <label for="exampleFormControlSelect1">Primer Filtro Fecha</label>
+                    
+                    
+                    <calendario @update-date="updateDate" format='YYYY-MM-DD' v-once>
+                      
+                    </calendario>
+                     <p>EL RANGO ES : [[date]]</p>
+
+                  </div>
+                </div>
+
+
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="exampleFormControlSelect1">Segundo Filtro</label>
+                    <select class="form-control" id="exampleFormControlSelect1">
+                      <option>1</option>
+                      <option>2</option>
+                      <option>3</option>
+                      <option>4</option>
+                      <option>5</option>
+                    </select>
+                  </div>
+                </div>
+
+
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="exampleFormControlSelect1">Tercer Filtro</label>
+                    <select class="form-control" id="exampleFormControlSelect1">
+                      <option>1</option>
+                      <option>2</option>
+                      <option>3</option>
+                      <option>4</option>
+                      <option>5</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="exampleFormControlSelect1">Cuarto Filtro</label>
+                    <select class="form-control" id="exampleFormControlSelect1">
+                      <option>1</option>
+                      <option>2</option>
+                      <option>3</option>
+                      <option>4</option>
+                      <option>5</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="exampleFormControlSelect1">Quinto Filtro</label>
+                    <select class="form-control" id="exampleFormControlSelect1">
+                      <option>1</option>
+                      <option>2</option>
+                      <option>3</option>
+                      <option>4</option>
+                      <option>5</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="exampleFormControlSelect1">Sexto Filtro</label>
+                    <select class="form-control" id="exampleFormControlSelect1">
+                      <option>1</option>
+                      <option>2</option>
+                      <option>3</option>
+                      <option>4</option>
+                      <option>5</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div id="chartdiv"></div>
+              </div>
+              </form>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+<script>
+var c = Vue.component('calendario',{
+  template:'<input/>',
+  props:['format'],
+  mounted: function(){
+  var self = this;
+  $(this.$vue.el).daterangepicker({
+    "autoApply": true,
+    "opens": "center",
+    locale: {
+      format: this.format,
+      separator: '-',
+    },
+    function(start, end){
+      var date = [start,end];
+      self.$emit('update-date',date);
+    }
+  });
+  }
+})
+
+// 1st Show Modal
+function ModalClick() {
+    $('#myModal').modal('show').on('shown.bs.modal', function() {
+        var chart = LoadChart(); //instancia el grafico
+        vue.ajax(chart) //Consulting API with axios
+    });
+}
+
+
+
+// Create the Chart and return it
+function LoadChart() {
+    var chart = AmCharts.makeChart("chartdiv", {
+
+        "type": "serial",
+        "theme": "light",
+        "startDuration": 2,
+        "thousandsSeparator": '.',
+
+        "legend": {
+            "equalWidths": false,
+            "useGraphSettings": true,
+            "valueAlign": "left",
+            "valueWidth": 120
+        },
+        "dataProvider": [],
+
+        "graphs": [{
+                "alphaField": "alpha",
+                "balloonText": "[[value]] Activaciones",
+                "dashLengthField": "dashLength",
+                "fillAlphas": 0.7,
+                "legendPeriodValueText": "[[value.sum]]",
+                "legendValueText": "[[value]]",
+                "title": "Activaciones:",
+                "type": "column",
+                "valueField": "cantidad",
+                "valueAxis": "distanceAxis"
+            },
+            {
+                "balloonText": "Cuota de [[value]]",
+                "bullet": "round",
+                "bulletBorderAlpha": 1,
+                "useLineColorForBulletBorder": true,
+                "bulletColor": "#FFFFFF",
+                "legendPeriodValueText": "[[value.sum]]",
+                "legendValueText": "[[value]]",
+                "title": "Cuota:",
+                "fillAlphas": 0,
+                "valueField": "cuota",
+                "valueAxis": "latitudeAxis"
+            },
+            {
+                "balloonText": "Cuota de [[value]]",
+                "bullet": "round",
+                "bulletBorderAlpha": 1,
+                "useLineColorForBulletBorder": true,
+                "bulletColor": "#FFFFFF",
+                "legendValueText": "[[value]]%",
+                "title": "Cuota:",
+                "fillAlphas": 0,
+                "valueField": "cumplimiento",
+                "valueAxis": "latitudeAxis",
+                // "markerType": "triangleUp",
+                "type": "none"
+            }
+        ],
+        "chartCursor": {
+            "categoryBalloonDateFormat": "DD",
+            "cursorAlpha": 0.1,
+            "cursorColor": "#000000",
+            "fullWidth": true,
+            "valueBalloonsEnabled": false,
+            "zoomable": false
+        },
+        "dataDateFormat": "YYYY-MM-DD",
+        "categoryField": "fecha",
+        "categoryAxis": {
+            "dateFormats": [{
+                "period": "DD",
+                "format": "DD"
+            }, {
+                "period": "WW",
+                "format": "MMM DD"
+            }, {
+                "period": "MM",
+                "format": "MMM"
+            }, {
+                "period": "YYYY",
+                "format": "YYYY"
+            }],
+            "parseDates": true,
+            "autoGridCount": false,
+            "axisColor": "#555555",
+            "gridAlpha": 0.1,
+            "gridColor": "#FFFFFF",
+            "gridCount": 50
+
+        },
+
+    });
+    return chart;
+}
+
+
+
+
+
+
+var vue = new Vue({
+    delimiters: ['[[', ']]'],
+    el: '#app',
+    components:{'c':c},
+
+    data: {
+        lista: [],
+        urlPrueba: 'api-reporteria/cuota/?fecha1=2018-05-01&fecha2=2018-05-31',
+        date:null,
+      },
+
+
+    methods: {
+        ajax: function(chart){ //Consulta Ajax
+            axios.get(this.urlPrueba).then(response => {
+                this.lista = funcion(response.data.Activacion, response.data.Cuota) //Funcion que crea el JSON en funcion al response
+                chart.dataProvider = this.lista
+                chart.validateData()
+
+
+                // $('input[name="daterange"]').daterangepicker({
+                //     "autoApply": true,
+                //     "opens": "center",
+                //     locale: {
+                //         format: 'YYYY-MM-DD',
+                //         separator: '-',
+                //       }
+                //     })
+
+
+            });
+        },
+
+        updateDate:function(date){
+          this.date = date
+        },
+
+        getFormValues(element) {
+            this.urlPrueba = 'api-reporteria/cuota/?fecha1=' + element.target.elements.daterange.value.slice(0, 10) + '&fecha2=' + element.target.elements.daterange.value.slice(11, 21)
+            this.ajax()
+
+        },
+      formOnChange: function(){
+        console.log("Cambiaste algo")
+      }
+    },
+});
+
+
+
+
+
+
+
+
+//Funcion que crea el JSON
+function funcion(activacion, cuota) {
+    var yson = '['
+    var flag
+    for (var i in cuota) { // iterate over cuota obj
+        flag = false
+        if (cuota.hasOwnProperty(i)) { // hasOwnProperty is used to filter propertys from the object
+
+            for (var j in activacion) { //inside, iterare over actividad
+                if (activacion.hasOwnProperty(j)) { //hasOwnProperty is used to filter propertys from the object
+
+                    if (cuota[i].fecha == activacion[j].fecha) { // ask by date
+
+                        yson += '{"fecha":"' + cuota[i].fecha + '","cuota":"' + Math.round(cuota[i].cuota) + '","cantidad":"' + activacion[j].cantidad + '","cumplimiento":"' + Math.round((activacion[j].cantidad / cuota[i].cuota) * 100) + '"},'
+                        flag = true
+
+                    }
+
+                }
+            }
+        }
+        if (flag == false) {
+            yson += '{"fecha":"' + cuota[i].fecha + '","cuota":"' + cuota[i].cuota + '","cantidad":"0", "cumplimiento":0},'
+        }
+    }
+    yson = yson.substring(0, yson.length - 1);
+    yson += ']'
+
+    yson = JSON.parse(yson)
+    return yson;
+};
+
+
+</script>
+
+{%endblock%}

@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block extrahead %}
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+{% endblock extrahead %}
+
+{% block content %}
+<div id="upload-p2p">
+
+    <div class=" box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title">Cargar P2P</h3>
+        </div>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="box-body">
+              <h2>{{header}}</h2>
+    
+              <div class="form-group">
+                  <label for="name" class="col-md-3 col-sm-3 col-xs-12 control-label">Archivo: </label>
+                  <input type="file" name="myfile" class="form-control" required>
+              </div>
+            <!-- {% if form.errors %} -->
+            <!-- <p style="color: red;">
+              Por favor corrija los errores{{ form.errors|pluralize }}.
+             </p> -->
+            <!-- {% endif %} -->
+    
+          </div>
+    
+          <div class="box-footer">
+              <button type="submit" class="btn btn-primary" >
+                  <span class="glyphicon glyphicon-upload" style="margin-right:5px;"></span>
+                Cargar
+              </button>
+            </div>
+            <!-- /.box-footer -->
+          
+        </form>
+       
+    </div>
+
+    <div><br></div>
+
+    
+  <div class="box box-info">
+      <div class="box-header with-border">
+        <h3 class="box-title">Habilitar Filtros</h3>
+      </div>
+      <!-- /.box-header -->
+      <!-- form start -->
+      <form class="form-horizontal" method="post" enctype="multipart/form-data">
+        <div class="box-body">
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" id="filterLider" v-model="lider" @click="toggleLider()" > 
+                  Líderes
+                </label>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /.box-body -->
+     
+      </form>
+  </div>
+
+
+</div>
+
+<script>
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+axios.defaults.xsrfCookieName = 'csrftoken';
+
+    new Vue({
+      el: '#upload-p2p',
+      delimiters: ['[[',']]'],
+      data(){
+        return {
+          lider: true
+        }
+      },
+      created() {
+        fetch('/recargas/api/filtros/')
+        .then( response => response.json())
+        .then( json => {
+            this.lider = json[0].filtro  
+        });
+      },
+      methods: {
+        toggleLider() {
+          let data = {id: 1 , filtro: !this.lider};
+          console.log('====================================');
+          console.log(this.lider);
+          console.log('====================================');
+          let csrftoken = Cookies.get('csrftoken'); // Using JS Cookies library
+          axios.put(`/recargas/api/filtros/${data.id}/`, data)
+          .then(response => {
+            console.log(response,'####');
+          })
+          .catch(
+            error => { console.log(error)}
+          )
+        
+        }
+      }
+    })
+</script>
+  
+{% endblock %}
