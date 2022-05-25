@@ -42,7 +42,7 @@ py-moneyed==0.7.0
 pyasn1==0.3.2
 pycodestyle==2.4.0
 Pygments==2.2.0
-PyJWT==1.6.4
+PyJWT==2.4.0
 pylint==1.8.2
 pyodbc==4.0.21
 python-dateutil==2.6.1
